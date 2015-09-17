@@ -1,0 +1,1 @@
+{{#hasExplicitSetter}}{{& explicitSetter}}( value.GetValue<{{type}}>( ) );{{/hasExplicitSetter}}{{^hasExplicitSetter}}{{#hasParent}}{{parentQualifiedName}}::{{name}} = value.GetValue<{{type}}>( );{{/hasParent}}{{^hasParent}}{{qualifiedName}} = value.GetValue<{{type}}>( );{{/hasParent}}{{/hasExplicitSetter}}

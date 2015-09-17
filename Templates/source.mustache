@@ -1,0 +1,273 @@
+{{#usingPrecompiledHeader}}#include "{{precompiledHeader}}"
+{{/usingPrecompiledHeader}}
+#include "{{ouputHeaderFile}}"
+
+#if !defined(URSINE_REFLECTION_INCLUDED)
+
+#include <Utilities/MacroUtils.h>
+
+URSINE_ERROR( "<UrsineReflection.h> must be included in the input header file." )
+
+#endif
+
+namespace m = ursine::meta;
+
+m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
+    auto &db = m::ReflectionDatabase::Instance( );
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Class Allocations
+    ///////////////////////////////////////////////////////////////////////////
+    {{#class}}
+    {
+        { // Base Type
+            auto id = db.AllocateType( "{{& displayName}}" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, true );
+        }
+        {{#ptrTypeEnabled}}
+        { // Pointer Type
+            auto id = db.AllocateType( "{{& displayName}}*" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false );
+        }
+        {{/ptrTypeEnabled}}
+        {{#constPtrTypeEnabled}}
+        { // Const Pointer Type
+            auto id = db.AllocateType( "const {{& displayName}}*" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<const {{& qualifiedName}}*>::Register( id, type, false );
+        }
+        {{/constPtrTypeEnabled}}
+    }
+    {{/class}}
+    ///////////////////////////////////////////////////////////////////////////
+    // Enum Allocations
+    ///////////////////////////////////////////////////////////////////////////
+    {{#enum}}
+    {
+        { // Base Type
+            auto id = db.AllocateType( "{{& displayName}}" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, true );
+        }
+        {{#ptrTypeEnabled}}
+        { // Pointer Type
+            auto id = db.AllocateType( "{{& displayName}}*" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false );
+        }
+        {{/ptrTypeEnabled}}
+        {{#constPtrTypeEnabled}}
+        { // Const Pointer Type
+            auto id = db.AllocateType( "const {{& displayName}}*" );
+            auto &type = db.types[ id ];
+
+            m::TypeInfo<const {{& qualifiedName}}*>::Register( id, type, false );
+        }
+        {{/constPtrTypeEnabled}}
+    }
+    {{/enum}}
+    ///////////////////////////////////////////////////////////////////////////
+    // Global Definitions
+    ///////////////////////////////////////////////////////////////////////////
+    {{#global}}
+    db.AddGlobal<{{& type}}>( "{{& qualifiedName}}",{{#isGetterAccessible}}
+        [](void)
+        {
+            return m::Variant { {{> getterBody}} };
+        },{{/isGetterAccessible}}{{^isGetterAccessible}}
+        nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
+        [](const m::Argument &value)
+        {
+            {{> setterBody}}
+        },{{/isSetterAccessible}}{{^isSetterAccessible}}
+        nullptr,{{/isSetterAccessible}}
+        {
+            {{> metaDataInitializerList}}
+        }
+    );
+    {{/global}}
+    ///////////////////////////////////////////////////////////////////////////
+    // Global Functions
+    ///////////////////////////////////////////////////////////////////////////
+    {{#globalFunction}}
+    db.AddGlobalFunction( "{{& qualifiedName}}",
+        static_cast<{{& qualifiedSignature}}>( {{& qualifiedName}} ),
+        [](m::ArgumentList &args)
+        { {{#isVoidReturnType}}
+            {{> invocationBody}};
+
+            return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
+            return m::Variant {
+                {{> invocationBody}}
+            };{{/isVoidReturnType}}
+        },
+        {
+            {{> metaDataInitializerList}}
+        }
+    );
+    {{/globalFunction}}
+    ///////////////////////////////////////////////////////////////////////////
+    // Enum Definitions
+    ///////////////////////////////////////////////////////////////////////////
+    {{#enum}}
+    {
+        auto typeID = m::TypeInfo<{{& qualifiedName}}>::ID;
+
+        if (typeID != m::Type::Invalid && !m::TypeInfo<{{& qualifiedName}}>::Defined)
+        {
+            auto &type = db.types[ typeID ];
+
+            type.meta = {
+                {{> metaDataInitializerList}}
+            };
+
+            type.SetEnum<{{& qualifiedName}}>( "{{& displayName}}", {
+                {{#member}} { "{{key}}", {{value}} }{{^isLast}},{{/isLast}} 
+                {{/member}}
+            } );
+
+            m::TypeInfo<{{& qualifiedName}}>::Defined = true;
+        }
+    }
+    {{/enum}}
+    ///////////////////////////////////////////////////////////////////////////
+    // Class Definitions
+    ///////////////////////////////////////////////////////////////////////////
+    {{#class}}
+    /**
+     * {{& qualifiedName}}
+     */
+    {
+        auto typeID = m::TypeInfo<{{& qualifiedName}}>::ID;
+
+        if (typeID != m::Type::Invalid && !m::TypeInfo<{{& qualifiedName}}>::Defined)
+        {
+            auto &type = db.types[ typeID ];
+
+            type.meta = {
+                {{> metaDataInitializerList}}
+            };
+
+            type.LoadBaseClasses( db, typeID, { 
+                {{#baseClass}}typeof( {{& name}} ){{^isLast}},{{/isLast}} {{/baseClass}} 
+            } );
+
+            // Constructors
+            {{#constructor}}
+            type.AddConstructor<{{& templateParameters}}>(
+                [](m::ArgumentList &args)
+                {
+                    return m::Variant { 
+                        {{> invocationBody}}
+                    };
+                }, 
+                {
+                    {{> metaDataInitializerList}}
+                },
+                false
+            );
+            {{/constructor}}
+            // Dynamic Constructors
+            {{#dynamicConstructor}}
+            type.AddConstructor<{{& templateParameters}}>(
+                [](m::ArgumentList &args)
+                {
+                    return m::Variant { 
+                        {{> dynamicInvocationBody}}
+                    };
+                }, 
+                {
+                    {{> metaDataInitializerList}}
+                },
+                true
+            );
+            {{/dynamicConstructor}}
+            // Fields
+            {{#field}}
+            type.AddField<{{parentQualifiedName}}, {{type}}>( "{{& displayName}}",
+                {{#isGetterAccessible}}[](const m::Variant &obj)
+                {
+                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
+
+                    return m::Variant { {{> getterBody}} };
+                },{{/isGetterAccessible}}{{^isGetterAccessible}}
+                nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
+                [](m::Variant &obj, const m::Variant &value)
+                {
+                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
+
+                    {{> setterBody}}
+                },{{/isSetterAccessible}}{{^isSetterAccessible}}
+                nullptr,{{/isSetterAccessible}}
+                {
+                    {{> metaDataInitializerList}}
+                }
+            );
+            {{/field}}
+            // Static Fields
+            {{#staticField}}
+            type.AddStaticField<{{& parentQualifiedName}}, {{type}}>( "{{& displayName}}",
+                {{#isGetterAccessible}}[](void)
+                {
+                    return m::Variant { {{> getterBody}} };
+                },{{/isGetterAccessible}}{{^isGetterAccessible}}
+                nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
+                [](const m::Argument &value)
+                {
+                    {{> setterBody}}
+                },{{/isSetterAccessible}}{{^isSetterAccessible}}
+                nullptr,{{/isSetterAccessible}}
+                {
+                    {{> metaDataInitializerList}}
+                }
+            );
+            {{/staticField}}
+            // Methods
+            {{#method}}
+            type.AddMethod( "{{name}}",
+                static_cast<{{& qualifiedSignature}}>( &{{parentQualifiedName}}::{{name}} ),
+                [](m::Variant &obj, m::ArgumentList &args)
+                { 
+                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
+                    {{#isVoidReturnType}}
+                    instance.{{> invocationBody}};
+
+                    return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
+                    return m::Variant {
+                        instance.{{> invocationBody}}
+                    };{{/isVoidReturnType}}
+                },
+                {
+                    {{> metaDataInitializerList}}
+                }
+            );
+            {{/method}}
+            // Static Methods
+            {{#staticMethod}}
+            type.AddStaticMethod<{{parentQualifiedName}}>( "{{name}}",
+                static_cast<{{& qualifiedSignature}}>( {{parentQualifiedName}}::{{& qualifiedName}} ),
+                [](m::ArgumentList &args)
+                { {{#isVoidReturnType}}
+                    {{parentQualifiedName}}::{{> invocationBody}};
+
+                    return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
+                    return m::Variant {
+                        {{parentQualifiedName}}::{{> invocationBody}}
+                    };{{/isVoidReturnType}}
+                },
+                {
+                    {{> metaDataInitializerList}}
+                }
+            );{{/staticMethod}}
+
+            m::TypeInfo<{{& qualifiedName}}>::Defined = true;
+        }
+    }{{/class}}
+});

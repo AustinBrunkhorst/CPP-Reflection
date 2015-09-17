@@ -1,0 +1,1 @@
+{{#hasExplicitSetter}}instance.{{& explicitSetter}}( value.GetValue<{{type}}>( ) );{{/hasExplicitSetter}}{{^hasExplicitSetter}}instance.{{name}} = value.GetValue<{{type}}>( );{{/hasExplicitSetter}}

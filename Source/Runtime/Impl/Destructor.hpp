@@ -1,0 +1,7 @@
+namespace ursine
+{
+    namespace meta
+    {
+
+    }
+}
