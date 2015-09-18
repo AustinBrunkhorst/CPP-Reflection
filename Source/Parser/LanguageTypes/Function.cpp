@@ -3,9 +3,8 @@
 #include "LanguageTypes/Function.h"
 #include "LanguageTypes/Class.h"
 
-#include <Utils.h>
-
 #include <boost/format.hpp>
+#include <boost/algorithm/string/join.hpp>
 
 Function::Function(
     const Cursor &cursor, 
@@ -61,9 +60,7 @@ bool Function::isAccessible(void) const
 
 std::string Function::getQualifiedSignature(void) const
 {
-    std::string argsList;
-
-    ursine::utils::Join( m_signature, ", ", argsList );
+    auto argsList = boost::algorithm::join( m_signature, ", " );
 
     return (boost::format( "%1%(*)(%2%)" ) % m_returnType % argsList).str( );
 }

@@ -2,7 +2,7 @@
 
 #include "LanguageTypes/Invokable.h"
 
-#include <Utils.h>
+#include <boost/algorithm/string/join.hpp>
 
 Invokable::Invokable(const Cursor &cursor)
     : m_returnType( cursor.GetReturnType( ).GetDisplayName( ) )
@@ -38,9 +38,7 @@ Invokable::Invokable(const Cursor &cursor)
                 argument.GetDisplayName( )
             );
 
-            std::string qualifiedName;
-
-            ursine::utils::Join( parentNamespace, "::", qualifiedName );
+            auto qualifiedName = boost::algorithm::join( parentNamespace, "::" );
 
             m_signature.emplace_back( qualifiedName );
         }

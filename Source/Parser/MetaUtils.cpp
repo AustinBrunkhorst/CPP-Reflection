@@ -2,9 +2,9 @@
 
 #include "MetaUtils.h"
 
-#include <Utils.h>
-
 #include <iostream>
+
+#include <boost/algorithm/string/join.hpp>
 
 namespace utils
 {
@@ -27,9 +27,7 @@ namespace utils
         const Namespace &currentNamespace
     )
     {
-        std::string name;
-
-        ursine::utils::Join( currentNamespace, "::", name );
+        auto name = boost::algorithm::join( currentNamespace, "::" );
 
         if (!currentNamespace.empty( ))
             name += "::";
