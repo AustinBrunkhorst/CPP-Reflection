@@ -4,9 +4,9 @@
 I set out this summer (*2015*) to implement a flexible reflection system for the game project I'm working on. This repository contains a skeleton for parts of the system that I prototyped throughout the summer. With the proper dependencies and build system setup, you should have enough to integrate into your engine / application without much fuss.
 
 ## Quick Intro
-As a statically typed language, C++ wasn't designed to facilitate runtime type information. Instead, it's crazy fast and optimization friendly. As performance critical applications, it is for this reason that C++ is basically the standard backend for games.
+As a statically typed language, C++ wasn't designed to facilitate runtime type information. Instead, it's crazy fast and optimization friendly. Games are performance critical applications - it is for this reason that C++ is basically the standard backend.
 
-Type introspection is crucial for complex / large code bases that need to interface with tools (*i.e. a game editor*). Unless you're a team of all programmers (*I'm sorry if that's the case*) it is effectively impossible to iterate upon a larger game without some sort of tools to abstract away code (*especially in 3D*). Without type introspection, you can expect to copy and paste a lot of boilerplate code. This is **absurdly** tedious and undesirable.
+Type introspection is crucial for complex / large code bases that need to interface with tools (*i.e. a game editor*). Unless you're a team of all programmers (*I'm sorry if that's the case*) it is effectively impossible to iterate upon a larger game without some set of tools to abstract away code (*especially in 3D*). Without type introspection, you can expect to copy and paste a lot of boilerplate code. This is **absurdly** tedious and undesirable.
 
 The good news is that there are *tons and tons* of great resources out there for "extending" C++ to include meta information within your code base. The most common approaches you'll find are as follows:
 
@@ -43,7 +43,7 @@ Unfortunately, this also implies creating a much less intuitive build pipeline. 
 
 ## Pipeline
 
-In our engine (_we call it **Ursine Engine**, because we're dangerously clever and played on the fact that our team name is Bear King_), we use [CMake](http://www.cmake.org/) for managing most aspects of the the overall build pipeline. CMake is a horribly wonderful tool that I've come to love despite hating it at the same time. It allows us to generate solutions for most IDEs that anyone on the team likes to use, although currently, everyone is using Visual Studio 2015 (_finally **some** C++14, baby!_). 
+In our engine (_we call it **Ursine Engine**, because we're dangerously clever and played on the fact that our team name is Bear King_), we use [CMake](http://www.cmake.org/) for managing most aspects of the overall build pipeline. CMake is a horribly wonderful tool that I've come to love despite hating it at the same time. It allows us to generate solutions for most IDEs that anyone on the team likes to use, although currently, everyone is using Visual Studio 2015 (_finally **some** C++14, baby!_). 
 
 CMake makes this pipeline surprisingly simple which was a relief. I won't go into much specific detail, but I'll provide relevant snippets of the integration into our engine a little later when I describe the code in this repository.
 
@@ -202,7 +202,7 @@ Meta(Range(0.0f, 1.0f), Slider(SliderType::Horizontal))
 float someIntensityField;
 ```
 
-One of the coolest things about this aside from type safety, is that Visual Studio correctly syntax highlights the contents of the macro and also provides intellisense! It's a beautiful thing. Here's a more complete example of interfacing with it at runtime using the runtime library.
+One of the coolest things about this, aside from type safety, is that Visual Studio correctly syntax highlights the contents of the macro and also provides intellisense! It's a beautiful thing. Here's a more complete example of interfacing with it at runtime using the runtime library.
 
 ```C++
 struct SoundEffect 
@@ -220,7 +220,7 @@ int main(void)
     MetaManager &volumeMeta = soundEffectType.GetMeta( );
     
     // getting the "Range" property, then casting the variant as a range
-    Variant volumeRange = volumeMeta.GetProperty( typeof( Range ) ).GetValue<Range>( );
+    Range volumeRange = volumeMeta.GetProperty( typeof( Range ) ).GetValue<Range>( );
     
     // 0.0f
     float min = volumeRange.min;
@@ -281,7 +281,7 @@ auto someMethodWrapper = [](Variant &obj, ArgumentList &args)
 };
 ```
 
-That's it! It's much less compilicated than the previously mentioned approach. This concept is also applied to fields / globals - getters and setters are simply generated lambdas.
+That's it! It's much less compilicated than the previously mentioned approach. This concept is also applied to fields / globals with their getters and setters.
 
 There are some downsides though:
 + Larger code size. For each generated lambda, the compiler has to generate a bunch of symbols behind the scenes.
@@ -303,7 +303,7 @@ struct SoundEffect
 int main(void)
 {
 	Type soundEffectType = typeof( SoundEffect );
-	auto volumeField = soundEffectType.GetField( "volume" );
+	Field volumeField = soundEffectType.GetField( "volume" );
 
 	// the runtime supports overloading, but by default returns the first overload
 	Method loadMethod = soundEffectType.GetMethod( "Load" );
