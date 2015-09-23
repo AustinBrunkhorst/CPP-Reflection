@@ -62,11 +62,27 @@ The respository has two parts - [Parser](https://github.com/AustinBrunkhorst/CPP
 
 This is basic example of adding the prebuild step to an existing target in CMake.
 
-**Note:** this assumes you have created empty files for `${META_GENERATED_HEADER}` and `${META_GENERATED_SOURCE}` and added it to the list of sources when calling `add_executable( )`. Otherwise, CMake will complain about the files not existing initially.
-
 ```CMake
-# assume a target has been created, with add_executable( ... )
 set(PROJECT_NAME "Example")
+
+# assume this contains header files for this project
+set(PROJECT_HEADER_FILES ...)
+
+# assume this contains source files for this project
+set(PROJECT_SOURCE_FILES ...)
+
+# generated file names, in the build directory
+set(META_GENERATED_HEADER "${CMAKE_CURRENT_BINARY_DIR}/Meta.Generated.h")
+set(META_GENERATED_SOURCE "${CMAKE_CURRENT_BINARY_DIR}/Meta.Generated.cpp")
+
+# create the project target
+add_executable(${PROJECT_NAME} 
+    ${PROJECT_HEADER_FILES}
+    ${PROJECT_SOURCE_FILES}
+    # make sure the generated header and source are included
+    ${META_GENERATED_HEADER}
+    ${META_GENERATED_SOURCE}
+)
 
 # path to the reflection parser executable
 set(PARSE_TOOL_EXE "ReflectionParser.exe")
@@ -74,10 +90,6 @@ set(PARSE_TOOL_EXE "ReflectionParser.exe")
 # input source file to pass to the reflection parser compiler
 # in this file, include any files that you want exposed to the parser
 set(PROJECT_META_HEADER "Reflection.h")
-
-# generated file names
-set(META_GENERATED_HEADER "Meta.Generated.h")
-set(META_GENERATED_SOURCE "Meta.Generated.cpp")
 
 # fetch all include directories for the project target
 get_property(DIRECTORIES TARGET ${PROJECT_NAME} PROPERTY INCLUDE_DIRECTORIES)
@@ -101,10 +113,11 @@ else ()
     message(FATAL_ERROR "System include directories not implemented for this compiler.")
 endif ()
 
-# add the prebuild command that invokes the reflection parser executable
+# add the command that invokes the reflection parser executable 
+# whenever a header file in your project has changed
 add_custom_command(
-    TARGET ${PROJECT_NAME}
-    PRE_BUILD
+    OUTPUT ${META_GENERATED_HEADER} ${META_GENERATED_SOURCE}
+    DEPENDS ${PROJECT_HEADER_FILES}
     COMMAND call "${PARSE_TOOL_EXE}"
     --target-name "${PROJECT_NAME}"
     --in-source "${CMAKE_CURRENT_SOURCE_DIR}/${PROJECT_SOURCE_DIR}/${PROJECT_META_HEADER}"
@@ -214,7 +227,10 @@ struct SoundEffect
 int main(void)
 {
     // you can also use type meta::Type::Get( "SoundEffect" ) based on a string name
-    Field volumeField = typeof( SoundEffect ).GetField( "volume" );
+    Type soundEffectType = typeof( SoundEffect );
+
+    // the volume field in the SoundEffect struct
+    Field volumeField = soundEffectType.GetField( "volume" );
     
     // meta data for the volume field
     MetaManager &volumeMeta = soundEffectType.GetMeta( );
