@@ -1,11 +1,7 @@
 /* ----------------------------------------------------------------------------
-** Team Bear King
-** © 201x DigiPen Institute of Technology, All Rights Reserved.
+** © 201x Austin Brunkhorst, All Rights Reserved.
 **
 ** Enum.h
-**
-** Author:
-** - Austin Brunkhorst - a.brunkhorst@digipen.edu
 ** --------------------------------------------------------------------------*/
 
 #pragma once
