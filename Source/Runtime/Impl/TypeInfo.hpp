@@ -26,7 +26,7 @@ namespace ursine
 
             ID = id;
         
-            typedef std::decay<T> Decayed;
+            typedef typename std::decay<T>::type Decayed;
 
             data.isClass = std::is_class< Decayed >::value;
             data.isEnum = std::is_enum< Decayed >::value;
