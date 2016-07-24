@@ -318,24 +318,24 @@ struct SoundEffect
 
 int main(void)
 {
-	Type soundEffectType = typeof( SoundEffect );
-	Field volumeField = soundEffectType.GetField( "volume" );
+    Type soundEffectType = typeof( SoundEffect );
+    Field volumeField = soundEffectType.GetField( "volume" );
 
-	// the runtime supports overloading, but by default returns the first overload
-	Method loadMethod = soundEffectType.GetMethod( "Load" );
+    // the runtime supports overloading, but by default returns the first overload
+    Method loadMethod = soundEffectType.GetMethod( "Load" );
 
-	// creates an instance of a sound effect
-	Variant effect = soundEffectType.Create( );
+    // creates an instance of a sound effect
+    Variant effect = soundEffectType.Create( );
 
-	// effect.volume is now 85
-	volumeField.SetValue( effect, 85.0f );
+    // effect.volume is now 85
+    volumeField.SetValue( effect, 85.0f );
 
-	// 85
-	volumeField.GetValue( effect );
+    // 85
+    volumeField.GetValue( effect );
 
-	// effect.Load is called
-	loadMethod.Invoke( effect, { "Explosion.wav" } );
+    // effect.Load is called
+    loadMethod.Invoke( effect, { "Explosion.wav" } );
 
-	return 0;
+    return 0;
 }
 ```

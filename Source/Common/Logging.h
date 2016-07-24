@@ -11,9 +11,9 @@
 
 namespace ursine 
 {
-	namespace logging
-	{
-		template<typename... Args>
+    namespace logging
+    {
+        template<typename... Args>
         void Assert(
             const std::string &file, 
             const std::string &function, 
@@ -21,7 +21,7 @@ namespace ursine
             const std::string &format, 
             const Args&... args
         );
-	}
+    }
 }
 
 #include "Logging.hpp"

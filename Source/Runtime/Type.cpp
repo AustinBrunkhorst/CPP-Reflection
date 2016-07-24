@@ -385,7 +385,7 @@ namespace ursine
 
         std::vector<Constructor> Type::GetDynamicConstructors(void) const
         {
-             auto &handle = gDatabase.types[ m_id ].dynamicConstructors;
+            auto &handle = gDatabase.types[ m_id ].dynamicConstructors;
 
             std::vector<Constructor> constructors;
 
@@ -569,7 +569,7 @@ namespace ursine
             auto isEnum = IsEnum( );
 
             // number, or non-associative enum
-            if (IsPrimitive( ) || (isEnum && meta.GetProperty<SerializeAsNumber>( )))
+            if (IsPrimitive( ) || meta.GetProperty<SerializeAsNumber>( ))
             {
                 if (IsFloatingPoint( ) || !IsSigned( ))
                     return { instance.ToDouble( ) };
@@ -603,8 +603,8 @@ namespace ursine
                 object[ field.GetName( ) ] = json;
             }
 
-			if (invokeHook)
-				instance.m_base->OnSerialize( object );
+            if (invokeHook)
+                instance.m_base->OnSerialize( object );
 
             return object;
         }
@@ -649,7 +649,7 @@ namespace ursine
             auto isEnum = IsEnum( );
 
             // number, or non-associative enum
-            if (IsPrimitive( ) || (isEnum && meta.GetProperty<SerializeAsNumber>( )))
+            if (IsPrimitive( ) || meta.GetProperty<SerializeAsNumber>( ))
             {
                 if (IsFloatingPoint( ) || !IsSigned( ))
                     return { instance.ToDouble( ) };
@@ -683,8 +683,8 @@ namespace ursine
                 object[ field.GetName( ) ] = json;
             }
 
-			if (invokeHook)
-				instance.m_base->OnSerialize( object );
+            if (invokeHook)
+                instance.m_base->OnSerialize( object );
 
             return object;
         }
@@ -793,16 +793,16 @@ namespace ursine
                     GetName( ).c_str( )
                 );
 
-				auto &fieldData = value[ field.GetName( ) ];
+                auto &fieldData = value[ field.GetName( ) ];
 
-				if (!fieldData.is_null( ))
-				{
+                if (!fieldData.is_null( ))
+                {
                     auto fieldValue = fieldType.DeserializeJson( fieldData );
 
                     fieldValue.m_base->OnDeserialize( fieldData );
 
-					field.SetValue( instance, fieldValue );
-				}
+                    field.SetValue( instance, fieldValue );
+                }
             }
 
             instance.m_base->OnDeserialize( value );

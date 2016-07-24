@@ -157,7 +157,7 @@ void meta_generated::DefineModuleFile{{targetName}}{{moduleFileName}}(m::Reflect
             } );
             {{#arrayTypeEnabled}}
             // Array Constructor
-			type.SetArrayConstructor<{{& qualifiedName}}>( );{{/arrayTypeEnabled}}
+            type.SetArrayConstructor<{{& qualifiedName}}>( );{{/arrayTypeEnabled}}
 
             // Constructors
             {{#constructor}}{{#enableNonDynamic}}
