@@ -1,5 +1,14 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Variant.hpp
+** --------------------------------------------------------------------------*/
+
+#pragma once
+
 #include "VariantContainer.h"
 #include "ObjectWrapper.h"
+#include "ArrayVariantContainer.h"
 
 namespace ursine
 {
@@ -27,6 +36,8 @@ namespace ursine
 
         }
 
+        ///////////////////////////////////////////////////////////////////////
+
         template<typename T>
         Variant::Variant(T &data)
             : m_isConst( std::is_pointer<T>::value && std::is_const<T>::value )
@@ -35,15 +46,25 @@ namespace ursine
         
         }
 
+        template<typename T>
+        Variant::Variant(T &data, variant_policy::NoCopy)
+            : m_isConst( std::is_pointer<T>::value && std::is_const<T>::value )
+            , m_base( new VariantContainer< CleanedType<T>& >( data ) )
+        {
+        }
+
         ///////////////////////////////////////////////////////////////////////
 
         template<typename T>
         Variant::Variant(T &&data, 
             typename std::enable_if< 
-                !std::is_same<Variant&, T>::value 
+                !std::is_same<Variant, T>::value 
             >::type*, 
             typename std::enable_if< 
                 !std::is_const<T>::value 
+            >::type*,
+            typename std::enable_if<
+                !std::is_same<Argument, T>::value
             >::type*
         )
             : m_isConst( false )
@@ -52,6 +73,46 @@ namespace ursine
                     static_cast<T&&>( data ) 
                 )
             )
+        {
+
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        template<typename T>
+        Variant::Variant(Array<T> &rhs)
+            : m_isConst( false )
+            , m_base( new ArrayVariantContainer<T, meta_traits::ArrayByReference<T>>( rhs ) )
+        {
+
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        template<typename T>
+        Variant::Variant(const Array<T> &rhs)
+            : m_isConst( true )
+            , m_base( new ArrayVariantContainer<T, const meta_traits::ArrayByReference<T>>( const_cast<const meta_traits::ArrayByReference<T>>( rhs ) ) )
+        {
+
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        template<typename T>
+        Variant::Variant(Array<T> &&rhs)
+            : m_isConst( false )
+            , m_base( new ArrayVariantContainer<T, meta_traits::ArrayByValue<T>>( rhs ) )
+        {
+
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        template<typename T>
+        Variant::Variant(const Array<T> &&rhs)
+            : m_isConst( true )
+            , m_base( new ArrayVariantContainer<T, const meta_traits::ArrayByValue<T>>( rhs ) )
         {
 
         }
@@ -71,7 +132,7 @@ namespace ursine
         template<typename T>
         T &Variant::GetValue(void) const
         {
-            return *static_cast<T*>( m_base->GetPtr( ) );
+            return *static_cast<T*>( getPtr( ) );
         }
     }
 }

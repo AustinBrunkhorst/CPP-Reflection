@@ -1,4 +1,8 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Argument.cpp
+** --------------------------------------------------------------------------*/
 
 #include "Type.h"
 

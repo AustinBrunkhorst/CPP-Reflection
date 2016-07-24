@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Field.h
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "LanguageType.h"
@@ -35,6 +41,9 @@ private:
 
     std::string m_explicitGetter;
     std::string m_explicitSetter;
+
+    std::string m_veryExplicitGetter;
+    std::string m_veryExplicitSetter;
 
     bool isAccessible(void) const;
     bool isGetterAccessible(void) const;

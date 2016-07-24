@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** ReflectionParser.h
 ** --------------------------------------------------------------------------*/
@@ -13,7 +13,10 @@
 
 #include "Templates.h"
 
+#include "Module/ModuleFile.h"
+
 class Class;
+class External;
 class Global;
 class Function;
 class Enum;
@@ -25,6 +28,7 @@ public:
     ~ReflectionParser(void);
 
     void Parse(void);
+    void GenerateFiles(void);
 
     MustacheTemplate LoadTemplate(const std::string &name) const;
 
@@ -41,28 +45,43 @@ private:
     CXIndex m_index;
     CXTranslationUnit m_translationUnit;
 
-    std::vector<Class*> m_classes;
-    std::vector<Global*> m_globals;
-    std::vector<Function*> m_globalFunctions;
-    std::vector<Enum*> m_enums;
+    MustacheTemplate m_moduleFileHeaderTemplate;
+    MustacheTemplate m_moduleFileSourceTemplate;
 
     mutable std::unordered_map<
         std::string, 
         std::string
     > m_templatePartialCache;
 
-    void buildClasses(const Cursor &cursor, Namespace &currentNamespace);
-    void buildGlobals(const Cursor &cursor, Namespace &currentNamespace);
+    std::vector<std::shared_ptr<External>> m_externals;
+    std::unordered_map<std::string, ModuleFile> m_moduleFiles;
+
+    void buildClasses(
+        const Cursor &cursor, 
+        Namespace &currentNamespace
+    );
+
+    void buildGlobals(
+        const Cursor &cursor, 
+        Namespace &currentNamespace
+    );
 
     void buildGlobalFunctions(
         const Cursor &cursor, 
         Namespace &currentNamespace
     );
 
-    void buildEnums(const Cursor &cursor, Namespace &currentNamespace);
+    void buildEnums(
+        const Cursor &cursor, 
+        Namespace &currentNamespace
+    );
 
-    TemplateData compileClassTemplates(void) const;
-    TemplateData compileGlobalTemplates(void) const;
-    TemplateData compileGlobalFunctionTemplates(void) const;
-    TemplateData compileEnumTemplates(void) const;
+    void addGlobalTemplateData(TemplateData &data);
+
+    void generateModuleFile(
+        const fs::path &fileHeader, 
+        const fs::path &fileSource, 
+        const std::string &sourceHeader,
+        const ModuleFile &file
+    );
 };

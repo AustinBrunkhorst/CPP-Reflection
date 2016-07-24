@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Global.cpp
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Global.h"
@@ -10,14 +16,14 @@ Global::Global(
 )
     : LanguageType( cursor, currentNamespace )
     , m_isConst( cursor.GetType( ).IsConst( ) )
-    , m_hasExplicitGetter( m_metaData.GetFlag( kMetaExplicitGetter ) )
-    , m_hasExplicitSetter( m_metaData.GetFlag( kMetaExplicitSetter ) )
+    , m_hasExplicitGetter( m_metaData.GetFlag( native_property::ExplicitGetter ) )
+    , m_hasExplicitSetter( m_metaData.GetFlag( native_property::ExplicitSetter ) )
     , m_parent( parent )
     , m_name( cursor.GetSpelling( ) )
     , m_qualifiedName( utils::GetQualifiedName( cursor, currentNamespace ) )
-    , m_type( cursor.GetType( ).GetDisplayName( ) )
+    , m_type( utils::GetQualifiedName( cursor.GetType( ) ) )
 {
-    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( native_property::DisplayName );
 
     if (displayName.empty( ))
     {
@@ -58,7 +64,7 @@ TemplateData Global::CompileTemplate(const ReflectionParser *context) const
         utils::TemplateBool( m_hasExplicitGetter );
 
     data[ "explicitGetter" ] = 
-        m_metaData.GetProperty( kMetaExplicitGetter );
+        m_metaData.GetProperty( native_property::ExplicitGetter );
 
     data[ "getterBody" ] = 
         context->LoadTemplatePartial( kPartialGlobalGetter );
@@ -72,7 +78,7 @@ TemplateData Global::CompileTemplate(const ReflectionParser *context) const
         utils::TemplateBool( m_hasExplicitSetter );
 
     data[ "explicitSetter" ] = 
-        m_metaData.GetProperty( kMetaExplicitSetter );
+        m_metaData.GetProperty( native_property::ExplicitSetter );
 
     data[ "setterBody" ] = 
         context->LoadTemplatePartial( kPartialGlobalSetter );

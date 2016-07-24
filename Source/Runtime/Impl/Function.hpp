@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Function.hpp
+** --------------------------------------------------------------------------*/
+
 namespace ursine
 {
     namespace meta
@@ -5,12 +11,12 @@ namespace ursine
         template<typename ReturnType, typename ...ArgTypes>
         Function::Function(
             const std::string &name, 
-            ReturnType(*type)(ArgTypes...), 
-            Invoker invoker, Type parentType
+            ReturnType (*function)(ArgTypes...),
+            Type parentType
         )
             : Invokable( name )
             , m_parentType( parentType )
-            , m_invoker( invoker )
+            , m_invoker( new FunctionInvoker<ReturnType, ArgTypes...>( function ) )
         {
             TypeUnpacker<ArgTypes...>::Apply( m_signature );
         }

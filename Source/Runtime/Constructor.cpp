@@ -1,31 +1,73 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Constructor.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
 
 #include "Invokable.h"
 
 #include "Constructor.h"
 
+#include "Common/Logging.h"
+
 namespace ursine
 {
     namespace meta
     {
+        namespace
+        {
+            const auto kConstructorName = "constructor";
+        }
+
         Constructor::Constructor(void)
-            : Invokable( "INVALID" )
+            : Invokable( )
             , m_isDynamic( false )
             , m_classType( { Type::Invalid } )
             , m_invoker( nullptr ) { }
 
+        Constructor::Constructor(const Constructor &rhs)
+            : Invokable( kConstructorName )
+            , m_isDynamic( rhs.m_isDynamic )
+            , m_classType( rhs.m_classType )
+            , m_invoker( rhs.m_invoker )
+        {
+            m_signature = rhs.m_signature;
+        }
+
+        Constructor::Constructor(const Constructor &&rhs)
+            : Invokable( kConstructorName )
+            , m_isDynamic( rhs.m_isDynamic )
+            , m_classType( rhs.m_classType )
+            , m_invoker( std::move( rhs.m_invoker ) )
+        {
+            m_signature = std::move( rhs.m_signature );
+        }
+
         Constructor::Constructor(
             Type classType, 
             InvokableSignature signature, 
-            Invoker invoker, 
+            ConstructorInvokerBase *invoker,
             bool isDynamic
         )
-            : Invokable( "constructor" )
+            : Invokable( kConstructorName )
             , m_isDynamic( isDynamic )
             , m_classType( classType )
             , m_invoker( invoker )
         {
             m_signature = signature;
+        }
+
+        Constructor &Constructor::operator=(const Constructor &&rhs)
+        {
+            m_isDynamic = rhs.m_isDynamic;
+            m_classType = rhs.m_classType;
+            m_invoker = std::move( rhs.m_invoker );
+
+            m_signature = std::move( rhs.m_signature );
+
+            return *this;
         }
 
         const Constructor &Constructor::Invalid(void)
@@ -52,9 +94,9 @@ namespace ursine
 
         Variant Constructor::InvokeVariadic(ArgumentList &arguments) const
         {
-            UAssert( IsValid( ), "Invalid constructor invoked" );
+            UAssert( IsValid( ), "Invalid constructor invoked." );
 
-            return m_invoker( arguments );
+            return m_invoker->Invoke( arguments );
         }
     }
 }

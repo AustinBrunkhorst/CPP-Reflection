@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Destructor.h
 ** --------------------------------------------------------------------------*/
@@ -8,7 +8,7 @@
 
 #include "Invokable.h"
 
-#include <functional>
+#include "DestructorInvoker.h"
 
 namespace ursine
 {
@@ -17,10 +17,8 @@ namespace ursine
         class Destructor : public Invokable
         {
         public:
-            typedef std::function<void(Variant &)> Invoker;
-
             Destructor(void);
-            Destructor(Type classType, Invoker invoker);
+            Destructor(Type classType, DestructorInvokerBase *invoker);
 
             static const Destructor &Invalid(void);
 
@@ -33,9 +31,7 @@ namespace ursine
         private:
             Type m_classType;
 
-            Invoker m_invoker;
+            std::shared_ptr<DestructorInvokerBase> m_invoker;
         };
     }
 }
-
-#include "Impl/Destructor.hpp"

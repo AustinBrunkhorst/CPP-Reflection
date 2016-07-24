@@ -1,4 +1,10 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** ReflectionDatabase.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
 
 #include "ReflectionDatabase.h"
 
@@ -15,7 +21,11 @@
 #define REGISTER_NATIVE_TYPE_VARIANTS(type) \
     REGISTER_NATIVE_TYPE( type )            \
     REGISTER_NATIVE_TYPE( type* )           \
-    REGISTER_NATIVE_TYPE( const type*)      \
+    REGISTER_NATIVE_TYPE( const type* )     \
+
+#define REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY(type)           \
+    REGISTER_NATIVE_TYPE_VARIANTS( type )                     \
+    types[ TypeInfo<type>::ID ].SetArrayConstructor<type>( ); \
 
 namespace ursine
 {
@@ -30,11 +40,19 @@ namespace ursine
             // register all of the native type variants explicity, before
             // anything else
             REGISTER_NATIVE_TYPE_VARIANTS( void );
-            REGISTER_NATIVE_TYPE_VARIANTS( int );
-            REGISTER_NATIVE_TYPE_VARIANTS( bool );
-            REGISTER_NATIVE_TYPE_VARIANTS( float );
-            REGISTER_NATIVE_TYPE_VARIANTS( double );
-            REGISTER_NATIVE_TYPE_VARIANTS( std::string );
+            REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY( int );
+            REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY( unsigned int );
+            REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY( bool );
+            REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY( float );
+            REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY( double );
+            REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY( std::string );
+
+            auto &stringType = types[ TypeInfo<std::string>::ID ];
+
+            // explicitly add default constructors for string
+
+            stringType.AddConstructor<std::string, false, false>( { } );
+            stringType.AddConstructor<std::string, false, true>( { } );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -98,15 +116,6 @@ namespace ursine
                 return Function::Invalid( );
 
             return search->second;
-        }
-
-        ///////////////////////////////////////////////////////////////////////
-
-        ReflectionDatabase::Initializer::Initializer(
-            std::function<void()> initializer
-        )
-        {
-            initializer( );
         }
     }
 }

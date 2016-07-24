@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** MetaDataManager.h
 ** --------------------------------------------------------------------------*/
@@ -21,9 +21,9 @@ public:
     std::string GetNativeString(const std::string &key) const;
 
     void CompileTemplateData(
-    	TemplateData &data, 
-    	const ReflectionParser *context
-	) const;
+        TemplateData &data, 
+        const ReflectionParser *context
+    ) const;
 private:
     typedef std::pair<std::string, std::string> Property;
 

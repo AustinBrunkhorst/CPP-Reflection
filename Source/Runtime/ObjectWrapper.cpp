@@ -1,6 +1,14 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** ObjectWrapper.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
 
 #include "ObjectWrapper.h"
+
+#include "Type.h"
 
 namespace ursine
 {
@@ -49,6 +57,16 @@ namespace ursine
         VariantBase *ObjectWrapper::Clone(void) const
         {
             return new ObjectWrapper( m_object );
+        }
+
+        void ObjectWrapper::OnSerialize(Json::object &output) const
+        {
+            m_object->OnSerialize( output );
+        }
+
+        void ObjectWrapper::OnDeserialize(const Json &input)
+        {
+            m_object->OnDeserialize( input );
         }
     }
 }

@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Main.cpp
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "ReflectionOptions.h"
@@ -13,19 +19,17 @@ int main(int argc, char *argv[])
 {
     auto start = std::chrono::system_clock::now( );
 
-    // misc initialization
-    {
-        // path to the executable
-        auto exeDir = fs::path( argv[ 0 ] );
-
-        // set the working directory to the executable directory
-        fs::current_path( exeDir.parent_path( ) );
-    }
-
     // parse command line
     try 
     {
-        po::options_description program( "Ursine3D Reflection Parser" );
+        // path to the executable
+        auto exeDir = fs::path( argv[ 0 ] ).parent_path( );
+
+        // set the working directory to the executable directory
+        if (!exeDir.empty( ))
+            fs::current_path( exeDir );
+
+        po::options_description program( "Ursine Meta Parser" );
 
         program.add_options( )
         ( 
@@ -38,19 +42,29 @@ int main(int argc, char *argv[])
             "Input target project name." 
         )
         ( 
+            SWITCH_OPTION( SourceRoot ), 
+            po::value<std::string>( )->required( ),
+            "Root source directory that is shared by all header files." 
+        )
+        ( 
             SWITCH_OPTION( InputSource ), 
             po::value<std::string>( )->required( ), 
             "Source file (header) to compile reflection data from." 
         )
-        ( 
-            SWITCH_OPTION( OutputHeader ), 
+            ( 
+            SWITCH_OPTION( ModuleHeaderFile ), 
             po::value<std::string>( )->required( ), 
-            "Output generated C++ header file." 
+            "Header file that declares this reflection module." 
         )
         ( 
-            SWITCH_OPTION( OutputSource ), 
+            SWITCH_OPTION( OutputModuleSource ), 
             po::value<std::string>( )->required( ), 
-            "Output generated C++ source file." 
+            "Output generated C++ module source file." 
+        )
+        ( 
+            SWITCH_OPTION( OutputModuleFileDirectory ), 
+            po::value<std::string>( )->required( ), 
+            "Output directory for generated C++ module file, header/source files." 
         )
         ( 
             SWITCH_OPTION( TemplateDirectory ), 
@@ -62,10 +76,23 @@ int main(int argc, char *argv[])
             po::value<std::string>( ), 
             "Optional name of the precompiled header file for the project." 
         )
+        (
+            SWITCH_OPTION( ForceRebuild ),
+            "Whether or not to ignore cache and write the header / source files."
+        )
+        (
+            SWITCH_OPTION( DisplayDiagnostics ),
+            "Whether or not to display diagnostics from clang."
+        )
         ( 
-            SWITCH_OPTION( CompilerFlags ), 
-            po::value<std::vector<std::string>>( )->multitoken( )->required( ),
-            "Optional list of flags to pass to the compiler." 
+            SWITCH_OPTION( CompilerIncludes ), 
+            po::value<std::string>( ),
+            "Optional file that includes the include directories for this target." 
+        )
+        (
+            SWITCH_OPTION( CompilerDefines ),
+            po::value<std::vector<std::string>>( )->multitoken( ),
+            "Optional list of definitions to include for the compiler."
         );
 
         po::variables_map cmdLine;
@@ -105,17 +132,29 @@ void parse(const po::variables_map &cmdLine)
 {
     ReflectionOptions options;
 
+    options.forceRebuild = 
+        cmdLine.count( kSwitchForceRebuild ) > 0;
+
+    options.displayDiagnostics = 
+        cmdLine.count( kSwitchDisplayDiagnostics ) > 0;
+
     options.targetName = 
         cmdLine.at( kSwitchTargetName ).as<std::string>( );
+
+    options.sourceRoot = 
+        cmdLine.at( kSwitchSourceRoot ).as<std::string>( );
 
     options.inputSourceFile = 
         cmdLine.at( kSwitchInputSource ).as<std::string>( );
 
-    options.outputHeaderFile = 
-        cmdLine.at( kSwitchOutputHeader ).as<std::string>( );
+    options.moduleHeaderFile = 
+        cmdLine.at( kSwitchModuleHeaderFile ).as<std::string>( );
 
-    options.outputSourceFile = 
-        cmdLine.at( kSwitchOutputSource ).as<std::string>( );
+    options.outputModuleSource = 
+        cmdLine.at( kSwitchOutputModuleSource ).as<std::string>( );
+
+    options.outputModuleFileDirectory = 
+        cmdLine.at( kSwitchOutputModuleFileDirectory ).as<std::string>( );
 
     // default arguments
     options.arguments =
@@ -131,19 +170,33 @@ void parse(const po::variables_map &cmdLine)
         options.precompiledHeader = 
             cmdLine.at( kSwitchPrecompiledHeader ).as<std::string>( );
     }
-
-    if (cmdLine.count( kSwitchCompilerFlags ))
+    
+    if (cmdLine.count( kSwitchCompilerIncludes ))
     {
-        auto flags = 
-            cmdLine.at( kSwitchCompilerFlags ).as<std::vector<std::string>>( );
+        auto includes = 
+            cmdLine.at( kSwitchCompilerIncludes ).as<std::string>( );
 
-        for (auto &flag : flags) 
-            options.arguments.emplace_back( flag.c_str( ) );
+        std::ifstream includesFile( includes );
+
+        std::string include;
+
+        while (std::getline( includesFile, include ))
+            options.arguments.emplace_back( "-I"+ include );
+    }
+
+    if (cmdLine.count( kSwitchCompilerDefines ))
+    {
+        auto defines = 
+            cmdLine.at( kSwitchCompilerDefines ).as<std::vector<std::string>>( );
+
+        for (auto &define : defines)
+            options.arguments.emplace_back( "-D"+ define );
     }
 
     options.templateDirectory = 
         cmdLine.at( kSwitchTemplateDirectory ).as<std::string>( );
     
+    std::cout << std::endl;
     std::cout << "Parsing reflection data for target \"" 
               << options.targetName << "\"" 
               << std::endl;
@@ -152,30 +205,11 @@ void parse(const po::variables_map &cmdLine)
 
     parser.Parse( );
 
-    // header template
     try
     {
-        std::string headerTemplate;
-
-        parser.GenerateHeader( headerTemplate );
-
-        utils::WriteText( options.outputHeaderFile, headerTemplate );
-    } 
-    catch (std::exception &e)
-    {
-        utils::FatalError( e.what( ) );
+        parser.GenerateFiles( );
     }
-
-    // source template
-    try
-    {
-        std::string sourceTemplate;
-
-        parser.GenerateSource( sourceTemplate );
-
-        utils::WriteText( options.outputSourceFile, sourceTemplate );
-    } 
-    catch (std::exception &e)
+    catch(std::exception &e)
     {
         utils::FatalError( e.what( ) );
     }

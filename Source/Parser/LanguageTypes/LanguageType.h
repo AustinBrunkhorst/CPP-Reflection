@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** LanguageType.h
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Cursor.h"
@@ -13,6 +19,8 @@ public:
     virtual ~LanguageType(void) { }
 
     const MetaDataManager &GetMetaData(void) const;
+
+    std::string GetSourceFile(void) const;
 
     virtual TemplateData CompileTemplate(
         const ReflectionParser *context
@@ -32,7 +40,12 @@ protected:
     // generated in the reflection database
     bool m_constPtrTypeEnabled;
 
+    // determines if this type generates data for its respective array type
+    bool m_arrayTypeEnabled;
+
     CX_CXXAccessSpecifier m_accessModifier;
 
 private:
+    // cursor that represents the root of this language type
+    Cursor m_rootCursor;
 };

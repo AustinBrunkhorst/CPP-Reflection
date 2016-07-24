@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** EnumBase.h
 ** --------------------------------------------------------------------------*/
@@ -29,7 +29,7 @@ namespace ursine
             virtual Type GetType(void) const = 0;
             virtual Type GetUnderlyingType(void) const = 0;
 
-            virtual std::vector<std::string> GetKeys(void) const = 0;
+            virtual const std::vector<std::string> &GetKeys(void) const = 0;
             virtual std::vector<Variant> GetValues(void) const = 0;
 
             virtual std::string GetKey(const Argument &value) const = 0;

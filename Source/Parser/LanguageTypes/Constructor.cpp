@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Constructor.cpp
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Class.h"
@@ -30,15 +36,14 @@ TemplateData Constructor::CompileTemplate(
 
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
 
-    data[ "templateParameters" ] = getTemplateParameters( );
+    auto enableNonDynamic = !m_metaData.GetFlag( native_property::DisableNonDynamicCtor );
 
-    data[ "invocationBody" ] = 
-        context->LoadTemplatePartial( kPartialConstructorInvocation );
+    if (enableNonDynamic)
+        data[ "templateParameters" ] = getTemplateParameters( false );
 
-    data[ "dynamicInvocationBody" ] = 
-        context->LoadTemplatePartial( kPartialDynamicConstructorInvocation );
+    data[ "dynamicTemplateParameters" ] = getTemplateParameters( true );
 
-    data[ "argument" ] = compileSignatureTemplate( );
+    data[ "enableNonDynamic" ] = utils::TemplateBool( enableNonDynamic );
 
     m_metaData.CompileTemplateData( data, context );
 
@@ -47,16 +52,35 @@ TemplateData Constructor::CompileTemplate(
 
 bool Constructor::isAccessible(void) const
 {
-    return m_accessModifier == CX_CXXPublic && 
-           !m_metaData.GetFlag( kMetaDisable );
+    if (m_accessModifier != CX_CXXPublic)
+        return false;
+
+    // if the parent wants white listed method, then we must have 
+    // the enable flag
+    if (m_parent->GetMetaData( ).GetFlag( native_property::WhiteListMethods ))
+        return m_metaData.GetFlag( native_property::Enable );
+
+    // must not be explicitly disabled
+    return !m_metaData.GetFlag( native_property::Disable );
 }
 
-std::string Constructor::getTemplateParameters(void) const
+std::string Constructor::getTemplateParameters(bool isDynamic) const
 {
-    auto params( m_signature );
+    std::vector<std::string> params;
 
-    params.insert( params.begin( ), m_parent->m_qualifiedName );
+    // ClassType
+    params.push_back( m_parent->m_qualifiedName );
 
-    // parent type, arg types, ...
-    return boost::algorithm::join( params, ", " );
+    // IsDynamic
+    params.emplace_back( isDynamic ? "true" : "false" );
+
+    // IsWrapped
+    params.emplace_back( 
+        m_metaData.GetFlag( native_property::DynamicCtorWrap ) ? "true" : "false"
+    );
+
+    // Args...
+    params.insert( params.end( ), m_signature.begin( ), m_signature.end( ) );
+
+    return boost::join( params, ", " );
 }

@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** TypeData.h
 ** --------------------------------------------------------------------------*/
@@ -28,6 +28,8 @@ namespace ursine
         {
             bool isEnum : 1;
             bool isPrimitive : 1;
+            bool isSigned : 1;
+            bool isFloatingPoint : 1;
             bool isPointer : 1;
             bool isClass : 1;
 
@@ -44,6 +46,8 @@ namespace ursine
             Type::Set baseClasses;
             Type::Set derivedClasses;
 
+            Constructor arrayConstructor;
+
             Destructor destructor;
 
             std::unordered_map<
@@ -56,15 +60,8 @@ namespace ursine
                 Constructor
             > dynamicConstructors;
 
-            std::unordered_map<
-                std::string, 
-                Field
-            > fields;
-
-            std::unordered_map<
-                std::string, 
-                Global
-            > staticFields;
+            std::vector<Field> fields;
+            std::vector<Global> staticFields;
 
             std::unordered_map<
                 std::string, 
@@ -82,8 +79,6 @@ namespace ursine
             TypeData(void);
             TypeData(const std::string &name);
 
-            ~TypeData(void);
-
             void LoadBaseClasses(
                 ReflectionDatabase &db, 
                 TypeID thisType, 
@@ -93,12 +88,13 @@ namespace ursine
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
 
-            template<typename ClassType, typename ...Args>
+            template<typename ClassType, bool IsDynamic, bool IsWrapped, typename ...Args>
             void AddConstructor(
-                Constructor::Invoker invoker, 
-                const MetaManager::Initializer &meta, 
-                bool isDynamic
+                const MetaManager::Initializer &meta
             );
+
+            template<typename ClassType>
+            void SetArrayConstructor(void);
 
             const Constructor &GetConstructor(
                 const InvokableSignature &signature
@@ -116,34 +112,112 @@ namespace ursine
 
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
+            
+            // Method Getter, Method Setter
+            template<typename ClassType, typename FieldType, typename GetterReturnType, typename SetterArgumentType>
+            void AddField(
+                const std::string &name,
+                GetterReturnType (ClassType::*methodGetter)(void),
+                void (ClassType::*methodSetter)(SetterArgumentType),
+                const MetaManager::Initializer &meta
+            );
 
+            // Const Method Getter, Method Setter
+            template<typename ClassType, typename FieldType, typename GetterReturnType, typename SetterArgumentType>
+            void AddField(
+                const std::string &name,
+                GetterReturnType (ClassType::*methodGetter)(void) const,
+                void (ClassType::*methodSetter)(SetterArgumentType),
+                const MetaManager::Initializer &meta
+            );
+
+
+            // Method Getter, Field Setter
+            template<typename ClassType, typename FieldType, typename GetterReturnType>
+            void AddField(
+                const std::string &name, 
+                GetterReturnType (ClassType::*methodGetter)(void),
+                typename FieldSetter<ClassType, FieldType, false>::Signature fieldSetter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Const Method Getter, Field Setter
+            template<typename ClassType, typename FieldType, typename GetterReturnType>
+            void AddField(
+                const std::string &name, 
+                GetterReturnType (ClassType::*methodGetter)(void) const,
+                typename FieldSetter<ClassType, FieldType, false>::Signature fieldSetter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Field Getter, Method Setter
+            template<typename ClassType, typename FieldType, typename SetterArgumentType>
+            void AddField(
+                const std::string &name, 
+                typename FieldGetter<ClassType, FieldType, false>::Signature fieldGetter,
+                void (ClassType::*methodSetter)(SetterArgumentType),
+                const MetaManager::Initializer &meta
+            );
+
+            // Field Getter, Field Setter
             template<typename ClassType, typename FieldType>
             void AddField(
                 const std::string &name, 
-                Field::Getter getter, 
-                Field::Setter setter, 
+                typename FieldGetter<ClassType, FieldType, false>::Signature fieldGetter,
+                typename FieldSetter<ClassType, FieldType, false>::Signature fieldSetter,
                 const MetaManager::Initializer &meta
             );
 
+            const Field &GetField(const std::string &name) const;
+
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
 
+            // Method Getter, Method Setter
+            template<typename ClassType, typename FieldType, typename GetterType, typename SetterType>
+            void AddStaticField(
+                const std::string &name, 
+                GetterType getter,
+                SetterType setter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Method Getter, Field Setter
+            template<typename ClassType, typename FieldType, typename GetterType>
+            void AddStaticField(
+                const std::string &name, 
+                GetterType getter,
+                FieldType *fieldSetter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Field Getter, Method Setter
+            template<typename ClassType, typename FieldType, typename SetterType>
+            void AddStaticField(
+                const std::string &name, 
+                FieldType *fieldGetter,
+                SetterType setter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Field Getter, Field Setter
             template<typename ClassType, typename FieldType>
             void AddStaticField(
                 const std::string &name, 
-                Global::Getter getter, 
-                Global::Setter setter, 
+                FieldType *fieldGetter,
+                FieldType *fieldSetter,
                 const MetaManager::Initializer &meta
             );
 
+            const Global &GetStaticField(const std::string &name) const;
+
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
 
-            template<typename MethodType, typename MethodInvoker>
+            template<typename MethodType>
             void AddMethod(
                 const std::string &name, 
-                MethodType type, 
-                MethodInvoker invoker, 
+                MethodType method,
                 const MetaManager::Initializer &meta
             );
 
@@ -161,13 +235,11 @@ namespace ursine
 
             template<
                 typename ClassType, 
-                typename FunctionType, 
-                typename FunctionInvoker
+                typename FunctionType
             >
             void AddStaticMethod(
                 const std::string &name, 
-                FunctionType type, 
-                FunctionInvoker invoker, 
+                FunctionType function,
                 const MetaManager::Initializer &meta
             );
 
@@ -186,7 +258,7 @@ namespace ursine
             template<typename EnumType>
             void SetEnum(
                 const std::string &name, 
-                const typename EnumContainer<EnumType>::Table &table
+                const typename EnumContainer<EnumType>::Initializer &initalizer
             );
         };
     }

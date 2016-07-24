@@ -1,25 +1,32 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Destructor.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
 
 #include "Destructor.h"
+
+#include "Common/Logging.h"
 
 namespace ursine
 {
     namespace meta
     {
-        Destructor::Destructor(void)
-            : Invokable( "INVALID" )
-            , m_classType( { Type::Invalid } )
+        namespace
         {
-        
+            const auto kDestructorName = "destructor";
         }
 
-        Destructor::Destructor(Type classType, Invoker invoker)
-            : Invokable( "destructor" )
+        Destructor::Destructor(void)
+            : Invokable( )
+            , m_classType( { Type::Invalid } ) { }
+
+        Destructor::Destructor(Type classType, DestructorInvokerBase *invoker)
+            : Invokable( kDestructorName )
             , m_classType( classType )
-            , m_invoker( invoker )
-        {
-        
-        }
+            , m_invoker( invoker ) { }
 
         Type Destructor::GetClassType(void) const
         {
@@ -29,12 +36,14 @@ namespace ursine
         void Destructor::Invoke(Variant &instance) const
         {
             UAssert( IsValid( ), 
-                "Invalid constructor invoked" );
+                "Invalid constructor invoked" 
+            );
 
             UAssert( m_classType == instance.GetType( ), 
-                "Destructor called on incompatible type" );
+                "Destructor called on incompatible type" 
+            );
         
-            m_invoker( instance );
+            m_invoker->Invoke( instance );
 
             delete instance.m_base;
 

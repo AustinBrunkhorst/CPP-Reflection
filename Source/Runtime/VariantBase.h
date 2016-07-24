@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** VariantBase.h
 ** --------------------------------------------------------------------------*/
@@ -8,11 +8,14 @@
 
 #include <string>
 
+#include "JsonConfig.h"
+
 namespace ursine
 {
     namespace meta
     {
         class Type;
+        class ArrayWrapper;
 
         class VariantBase
         {
@@ -29,7 +32,13 @@ namespace ursine
             virtual double ToDouble(void) const = 0;
             virtual std::string ToString(void) const = 0;
 
+            virtual bool IsArray(void) const;
+            virtual ArrayWrapper GetArray(void) const;
+
             virtual VariantBase *Clone(void) const = 0;
+
+            virtual void OnSerialize(Json::object &output) const { }
+            virtual void OnDeserialize(const Json &input) { }
         };
     }
 }

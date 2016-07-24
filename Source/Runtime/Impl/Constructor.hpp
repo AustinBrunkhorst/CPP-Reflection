@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Constructor.hpp
+** --------------------------------------------------------------------------*/
+
 #include "Variant.h"
 
 namespace ursine

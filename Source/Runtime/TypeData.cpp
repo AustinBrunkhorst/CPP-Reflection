@@ -1,4 +1,10 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** TypeData.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
 
 #include "TypeData.h"
 
@@ -13,7 +19,7 @@ namespace ursine
             , isPrimitive( false )
             , isPointer( false )
             , isClass( false )
-            , enumeration { nullptr } { }
+            , enumeration { nullptr }  { }
 
         ///////////////////////////////////////////////////////////////////////
 
@@ -24,17 +30,6 @@ namespace ursine
             , isClass( false )
             , name( name )
             , enumeration { nullptr } { }
-
-        TypeData::~TypeData(void)
-        {
-            if (isEnum)
-            {
-                // free allocated enum container
-                delete enumeration.m_base;
-
-                enumeration.m_base = nullptr;
-            }
-        }
 
         void TypeData::LoadBaseClasses(
             ReflectionDatabase &db, 
@@ -82,6 +77,26 @@ namespace ursine
         }
 
         ///////////////////////////////////////////////////////////////////////
+
+        const Field &TypeData::GetField(const std::string &name) const
+        {
+            for (auto &field : fields)
+                if (field.GetName( ) == name)
+                    return field;
+
+            return Field::Invalid( );
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        const Global &TypeData::GetStaticField(const std::string &name) const
+        {
+            for (auto &field : staticFields)
+                if (field.GetName( ) == name)
+                    return field;
+
+            return Global::Invalid( );
+        }
 
         const Method &TypeData::GetMethod(const std::string &name)
         {

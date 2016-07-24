@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Field.h
 ** --------------------------------------------------------------------------*/
@@ -10,8 +10,8 @@
 
 #include "Variant.h"
 
-#include <vector>
-#include <functional>
+#include "FieldGetter.h"
+#include "FieldSetter.h"
 
 namespace ursine
 {
@@ -20,8 +20,7 @@ namespace ursine
         class Field : public MetaContainer
         {
         public:
-            typedef std::function<Variant(const Variant &)> Getter;
-            typedef std::function<void(Variant &, const Variant &)> Setter;
+            static bool SetValue(Variant &instance, const Variant &value, const Method &setter);
 
             Field(void);
 
@@ -29,9 +28,11 @@ namespace ursine
                 const std::string &name, 
                 Type type, 
                 Type classType, 
-                Getter getter, 
-                Setter setter
+                FieldGetterBase *getter, 
+                FieldSetterBase *setter
             );
+
+            static const Field &Invalid(void);
 
             bool IsValid(void) const;
             bool IsReadOnly(void) const;
@@ -41,17 +42,21 @@ namespace ursine
 
             const std::string &GetName(void) const;
 
-            Variant GetValue(Variant &instance) const;
+            Variant GetValue(const Variant &instance) const;
+            Variant GetValueReference(const Variant &instance) const;
+
             bool SetValue(Variant &instance, const Variant &value) const;
             
         private:
+            friend struct TypeData;
+
             Type m_type;
             Type m_classType;
 
             std::string m_name;
 
-            Getter m_getter;
-            Setter m_setter;
+            std::shared_ptr<FieldGetterBase> m_getter;
+            std::shared_ptr<FieldSetterBase> m_setter;
         };
     }
 }

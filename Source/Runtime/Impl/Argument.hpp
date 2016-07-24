@@ -1,3 +1,11 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Argument.hpp
+** --------------------------------------------------------------------------*/
+
+#pragma once
+
 #include "Type.h"
 
 namespace ursine

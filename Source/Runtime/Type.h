@@ -1,18 +1,22 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Type.h
 ** --------------------------------------------------------------------------*/
 
 #pragma once
 
+#include "Macros.h"
+
 #include "TypeConfig.h"
 #include "InvokableConfig.h"
 #include "ArgumentConfig.h"
+#include "JsonConfig.h"
 
 #include <string>
 #include <vector>
 #include <set>
+#include <functional>
 
 namespace ursine
 {
@@ -28,17 +32,20 @@ namespace ursine
         class Function;
         class Argument;
 
+        class MetaManager;
+
         class Type
         {
         public:
             typedef std::vector<Type> List;
             typedef std::set<Type> Set;
+            typedef std::function<Variant(const Variant &, const Field &)> SerializationGetterOverride;
 
             static const TypeID Invalid = 0;
 
             Type(void);
             Type(const Type &rhs);
-            Type(TypeID id);
+            Type(TypeID id, bool isArray = false);
 
             operator bool(void) const;
 
@@ -66,7 +73,7 @@ namespace ursine
             /** @brief Gets a type based on the qualified string name.
              *  @param name Name of the type.
              */
-            static Type Get(const std::string &name);
+            static Type GetFromName(const std::string &name);
 
             /** @brief Gets a type by deducing the type of an object.
              *  @param obj Object to deduce type from.
@@ -129,6 +136,17 @@ namespace ursine
              */
             bool IsPrimitive(void) const;
 
+            /** @brief Determines if this type is a floating point
+             *          float, double, long double, etc.
+             *  @return true if the type is among (float, double, long double, etc).
+             */
+            bool IsFloatingPoint(void) const;
+
+            /** @brief Determines if this type is signed (unsigned int, etc).
+             *  @return true if the type is signed.
+             */
+            bool IsSigned(void) const;
+
             /** @brief Determines if this type is an enumeration.
              *  @return true if the type is either an enum or enum class.
              */
@@ -145,6 +163,11 @@ namespace ursine
              */
             bool IsClass(void) const;
 
+            /** @brief Determines if this type is an array type.
+             *  @return true if the type is an array type.
+             */
+            bool IsArray(void) const;
+
             ///////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////
 
@@ -152,7 +175,12 @@ namespace ursine
              *  @return Qualified name of the type as it is declared.
              *          ie - "boost::regex"
              */
-            const std::string &GetName(void) const;
+            std::string GetName(void) const;
+
+            /** @brief Gets meta data for this type.
+             *  @return Meta Data Manager for this type.
+             */
+            const MetaManager &GetMeta(void) const;
 
             /** @brief Instantiates an instance of this type with the given 
              *         constructor signature. NOTE: it is much faster to cache 
@@ -211,6 +239,13 @@ namespace ursine
              *          ie - const int * -> int
              */
             Type GetDecayedType(void) const;
+
+            /** @brief Gets the type that this array type holds.
+            *  @return Type this array type holds.
+            *          ie - Array<double> -> double
+            *          Non array types return itself.
+            */
+            Type GetArrayType(void) const;
 
             /** @brief Gets the enumeration representing this type, 
              *         assuming it's an enum type.
@@ -280,6 +315,11 @@ namespace ursine
             const Constructor &GetDynamicConstructor(
                   const InvokableSignature &signature = InvokableSignature( )
             ) const;
+
+            /** @brief Gets the constructor for this array type.
+             *  @return Reference to the array constructor in the reflection database.
+             */
+            const Constructor &GetArrayConstructor(void) const;
 
             /** @brief Gets the destructor for this type assuming it's a 
              *         class type.
@@ -352,7 +392,7 @@ namespace ursine
              *         assuming it's a class type.
              *  @return Set of fields for this type.
              */
-            std::vector<Field> GetFields(void) const;
+            const std::vector<Field> &GetFields(void) const;
 
             /** @brief Gets a specific field for this type.
              *  @param name Name of the field.
@@ -377,6 +417,19 @@ namespace ursine
              */
             const Global &GetStaticField(const std::string &name) const;
 
+            template<typename ClassType>
+            static Json SerializeJson(const ClassType &instance, bool invokeHook = true);
+
+            Json SerializeJson(const Variant &instance, bool invokeHook = true) const;
+            Json SerializeJson(const Variant &instance, SerializationGetterOverride getterOverride, bool invokeHook = true) const;
+
+            template<typename ClassType>
+            static ClassType DeserializeJson(const Json &value);
+
+            Variant DeserializeJson(const Json &value) const;
+            Variant DeserializeJson(const Json &value, const Constructor &ctor) const;
+            void DeserializeJson(Variant &instance, const Json &value) const;
+
         private:
             friend class std::allocator<Type>;
 
@@ -394,6 +447,7 @@ namespace ursine
             friend class Global;
 
             TypeID m_id;
+            bool m_isArray;
         };
     }
 }

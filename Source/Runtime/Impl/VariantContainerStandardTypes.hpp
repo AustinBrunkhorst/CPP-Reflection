@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** VariantConatinerStandardTypes.hpp
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #define DECLARE_STANDARD_VARIANT(type)                                     \
@@ -56,6 +62,7 @@ namespace ursine
         };
 
         DECLARE_STANDARD_VARIANT( int );
+        DECLARE_STANDARD_VARIANT( unsigned int );
         DECLARE_STANDARD_VARIANT( bool );
         DECLARE_STANDARD_VARIANT( float );
         DECLARE_STANDARD_VARIANT( double );

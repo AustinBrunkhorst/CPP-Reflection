@@ -1,4 +1,10 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** EnumBase.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
 
 #include "EnumBase.h"
 

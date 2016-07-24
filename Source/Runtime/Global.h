@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Global.h
 ** --------------------------------------------------------------------------*/
@@ -10,8 +10,8 @@
 
 #include "Variant.h"
 
-#include <vector>
-#include <functional>
+#include "GlobalGetter.h"
+#include "GlobalSetter.h"
 
 namespace ursine
 {
@@ -28,10 +28,12 @@ namespace ursine
             Global(
                 const std::string &name, 
                 Type type, 
-                Getter getter, 
-                Setter setter, 
+                GlobalGetterBase *getter, 
+                GlobalSetterBase *setter, 
                 Type parentType = Type::Invalid
             );
+
+            static const Global &Invalid(void);
 
             bool IsValid(void) const;
             bool IsReadOnly(void) const;
@@ -45,13 +47,15 @@ namespace ursine
             bool SetValue(const Argument &value) const;
             
         private:
+            friend struct TypeData;
+
             Type m_type;
             Type m_parentType;
 
             std::string m_name;
 
-            Getter m_getter;
-            Setter m_setter;
-        };
+            std::shared_ptr<GlobalGetterBase> m_getter;
+            std::shared_ptr<GlobalSetterBase> m_setter;
+        };  
     }
 }

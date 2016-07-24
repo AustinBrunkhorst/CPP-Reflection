@@ -1,4 +1,10 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Variant.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
 
 #include "Variant.h"
 
@@ -55,6 +61,11 @@ namespace ursine
             return m_base ? m_base->GetType( ) : Type::Invalid;
         }
 
+        ArrayWrapper Variant::GetArray(void) const
+        {
+            return m_base ? m_base->GetArray( ) : ArrayWrapper( );
+        }
+
         int Variant::ToInt(void) const
         {
             return m_base ? m_base->ToInt( ) : int( );
@@ -80,6 +91,11 @@ namespace ursine
             return m_base ? m_base->ToString( ) : std::string( );
         }
 
+        Json Variant::SerializeJson(void) const
+        {
+            return GetType( ).SerializeJson( *this );
+        }
+
         void Variant::Swap(Variant &other)
         {
             std::swap( m_base, other.m_base );
@@ -93,6 +109,11 @@ namespace ursine
         bool Variant::IsConst(void) const
         {
             return m_isConst;
+        }
+
+        bool Variant::IsArray(void) const
+        {
+            return m_base ? m_base->IsArray( ) : false;
         }
 
         void *Variant::getPtr(void) const

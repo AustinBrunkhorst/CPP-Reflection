@@ -1,14 +1,23 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Function.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
 
 #include "Function.h"
+
+#include "Common/Logging.h"
 
 namespace ursine
 {
     namespace meta
     {
         Function::Function(void)
-            : Invokable( "INVALID" )
-            , m_parentType( { Type::Invalid } ) { }
+            : Invokable( )
+            , m_parentType( { Type::Invalid } )
+            , m_invoker( nullptr ) { }
 
         const Function &Function::Invalid(void)
         {
@@ -29,13 +38,13 @@ namespace ursine
 
         Variant Function::InvokeVariadic(ArgumentList &arguments) const
         {
-        #ifdef CONFIG_DEBUG
+        #if defined(_DEBUG)
 
-            UAssert( IsValid( ), "Invalid function invocation" );
+            UAssert( IsValid( ), "Invalid function invocation." );
 
         #endif
         
-            return m_invoker( arguments );
+            return m_invoker->Invoke( arguments );
         }
     }
 }

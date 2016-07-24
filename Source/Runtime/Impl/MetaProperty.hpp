@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** MetaProperty.hpp
+** --------------------------------------------------------------------------*/
+
 namespace ursine
 {
     namespace meta

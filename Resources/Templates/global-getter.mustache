@@ -1,0 +1,1 @@
+{{#hasExplicitGetter}}{{#hasParent}}&{{& parentQualifiedName}}::{{& explicitGetter}}{{/hasParent}}{{^hasParent}}&{{& explicitGetter}}{{/hasParent}}{{/hasExplicitGetter}}{{^hasExplicitGetter}}{{#hasParent}}&{{& parentQualifiedName}}::{{name}}{{/hasParent}}{{^hasParent}}&{{& qualifiedName}}{{/hasParent}}{{/hasExplicitGetter}}

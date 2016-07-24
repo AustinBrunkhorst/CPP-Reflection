@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Invokable.h
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "Cursor.h"
@@ -14,8 +20,6 @@ protected:
     std::string m_returnType;
 
     Signature m_signature;
-
-    TemplateData compileSignatureTemplate(void) const;
 };
 
 const auto kReturnTypeVoid = "void";

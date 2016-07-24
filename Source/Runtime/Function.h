@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Function.h
 ** --------------------------------------------------------------------------*/
@@ -10,6 +10,8 @@
 
 #include "Variant.h"
 #include "Argument.h"
+
+#include "FunctionInvoker.h"
 
 #include <functional>
 
@@ -29,8 +31,7 @@ namespace ursine
             template<typename ReturnType, typename ...ArgTypes>
             Function(
                 const std::string &name, 
-                ReturnType(*type)(ArgTypes...), 
-                Invoker invoker, 
+                ReturnType (*function)(ArgTypes...),
                 Type parentType = Type::Invalid
             );
 
@@ -48,7 +49,7 @@ namespace ursine
         private:
             Type m_parentType;
 
-            Invoker m_invoker;
+            std::shared_ptr<FunctionInvokerBase> m_invoker;
         };
     }
 }

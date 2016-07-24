@@ -1,6 +1,16 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** MetaManager.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
+
+#include "Type.h"
 
 #include "MetaManager.h"
+
+#include "Common/Logging.h"
 
 #include <algorithm>
 
@@ -58,7 +68,7 @@ namespace ursine
             if (search == m_properties.end( ))
                 return Variant { };
 
-            return Variant { search->second, variant_policy::WrapObject( ) };
+            return ObjectVariant( search->second );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -74,7 +84,33 @@ namespace ursine
             m_properties[ type ] = prop;
         }
 
-        void MetaManager::copy(const MetaManager& rhs)
+        MetaManager::PropertyList MetaManager::GetProperties(void) const
+        {
+            PropertyList properties;
+
+            for (auto &property : m_properties)
+                properties.push_back( ObjectVariant( property.second ) );
+
+            return properties;
+        }
+
+        Json MetaManager::SerializeJson(void) const
+        {
+            Json::object object { };
+
+            for (auto &property : m_properties)
+            {
+                auto instance = ObjectVariant( property.second );
+
+                auto type = instance.GetType( );
+
+                object[ type.GetName( ) ] = type.SerializeJson( instance );
+            }
+
+            return object;
+        }
+
+        void MetaManager::copy(const MetaManager &rhs)
         {
             for (auto &prop : rhs.m_properties) 
             {

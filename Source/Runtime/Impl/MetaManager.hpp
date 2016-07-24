@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** MetaManager.hpp
+** --------------------------------------------------------------------------*/
+
 #include "TypeConfig.h"
 
 namespace ursine
@@ -10,7 +16,7 @@ namespace ursine
             static_assert( std::is_base_of<MetaProperty, PropertyType>::value, 
                 "Type must be a MetaProperty." );
             
-            auto type = typeof( PropertyType );
+            static const auto type = typeof( PropertyType );
 
             auto search = m_properties.find( type );
 

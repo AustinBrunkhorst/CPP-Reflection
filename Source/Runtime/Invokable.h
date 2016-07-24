@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Invokable.h
 ** --------------------------------------------------------------------------*/
@@ -20,7 +20,7 @@ namespace ursine
         class Invokable
         {
         public:
-            Invokable(const std::string &name);
+            Invokable(const std::string &name = "INVALID");
 
             template<typename ...Types>
             static InvokableSignature CreateSignature(void);

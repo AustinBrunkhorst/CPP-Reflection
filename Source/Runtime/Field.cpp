@@ -1,6 +1,13 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Field.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
 
 #include "Field.h"
+#include "Method.h"
 
 namespace ursine
 {
@@ -17,14 +24,34 @@ namespace ursine
             const std::string &name, 
             Type type, 
             Type classType, 
-            Getter getter, 
-            Setter setter
+            FieldGetterBase *getter,
+            FieldSetterBase *setter
         ) 
             : m_type( type )
             , m_classType( classType )
             , m_name( name )
             , m_getter( getter )
             , m_setter( setter ) { }
+
+        const Field &Field::Invalid(void)
+        {
+            static Field field;
+
+            return field;
+        }
+
+        bool Field::SetValue(Variant &instance, const Variant &value, const Method &setter)
+        {
+             // read only?
+            if (!instance.IsConst( ))
+            {
+                setter.Invoke( instance, value );
+
+                return true;
+            }
+
+            return false;
+        }
 
         bool Field::IsValid(void) const
         {
@@ -51,9 +78,14 @@ namespace ursine
             return m_name;
         }
 
-        Variant Field::GetValue(Variant &instance) const
+        Variant Field::GetValue(const Variant &instance) const
         {
-            return m_getter( instance );
+            return m_getter->GetValue( instance );
+        }
+
+        Variant Field::GetValueReference(const Variant &instance) const
+        {
+            return m_getter->GetValueReference( instance );
         }
 
         bool Field::SetValue(Variant &instance, const Variant &value) const
@@ -61,7 +93,7 @@ namespace ursine
             // read only?
             if (m_setter && !instance.IsConst( ))
             {
-                m_setter( instance, value );
+                m_setter->SetValue( instance, value );
 
                 return true;
             }

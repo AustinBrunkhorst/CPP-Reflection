@@ -1,9 +1,8 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Enum.h
 ** --------------------------------------------------------------------------*/
-
 #pragma once
 
 #include "EnumBase.h"
@@ -39,7 +38,7 @@ namespace ursine
 
             Enum(const EnumBase *base);
 
-            const EnumBase *m_base;
+            std::shared_ptr<const EnumBase> m_base;
         };
     }
 }

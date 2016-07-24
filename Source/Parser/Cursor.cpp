@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Cursor.cpp
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "Cursor.h"
@@ -15,6 +21,11 @@ CXCursorKind Cursor::GetKind(void) const
 Cursor Cursor::GetLexicalParent(void) const
 {
     return clang_getCursorLexicalParent( m_handle );
+}
+
+Cursor Cursor::GetTemplateSpecialization(void) const
+{
+    return clang_getSpecializedCursorTemplate( m_handle );
 }
 
 std::string Cursor::GetSpelling(void) const
@@ -42,6 +53,33 @@ std::string Cursor::GetMangledName(void) const
     utils::ToString( clang_Cursor_getMangling( m_handle ), mangled );
 
     return mangled;
+}
+
+std::string Cursor::GetUSR(void) const
+{
+    std::string usr;
+
+    utils::ToString( clang_getCursorUSR( m_handle ), usr );
+
+    return usr;
+}
+
+std::string Cursor::GetSourceFile(void) const
+{
+    auto range = clang_Cursor_getSpellingNameRange( m_handle, 0, 0 );
+
+    auto start = clang_getRangeStart( range );
+
+    CXFile file;
+    unsigned line, column, offset;
+
+    clang_getFileLocation( start, &file, &line, &column, &offset );
+
+    std::string filename;
+
+    utils::ToString( clang_getFileName( file ), filename );
+
+    return filename;
 }
 
 bool Cursor::IsDefinition(void) const
@@ -108,4 +146,9 @@ Cursor::List Cursor::GetChildren(void) const
 void Cursor::VisitChildren(Visitor visitor, void *data)
 {
     clang_visitChildren( m_handle, visitor, data );
+}
+
+unsigned Cursor::GetHash(void) const
+{
+    return clang_hashCursor( m_handle );
 }

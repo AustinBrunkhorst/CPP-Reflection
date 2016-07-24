@@ -1,22 +1,23 @@
+/* ----------------------------------------------------------------------------
+** GENERATED SOURCE FILE
+** Do not modify the contents of this file.
+**
+** Ursine3D Meta Generator v{{version}}
+** --------------------------------------------------------------------------*/
 {{#usingPrecompiledHeader}}#include "{{precompiledHeader}}"
 {{/usingPrecompiledHeader}}
-#include "{{ouputHeaderFile}}"
 
-#if !defined(URSINE_REFLECTION_INCLUDED)
+#include "{{moduleFileHeader}}"
+#include "{{moduleFileSourceHeader}}"
 
-#include <Utilities/MacroUtils.h>
-
-URSINE_ERROR( "<UrsineReflection.h> must be included in the input header file." )
-
-#endif
+#include <ReflectionDatabase.h>
 
 namespace m = ursine::meta;
 
-m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
-    auto &db = m::ReflectionDatabase::Instance( );
-
+void meta_generated::AllocateModuleFile{{targetName}}{{moduleFileName}}(m::ReflectionDatabase &db)
+{
     ///////////////////////////////////////////////////////////////////////////
-    // Class Allocations
+    // Class Allocation
     ///////////////////////////////////////////////////////////////////////////
     {{#class}}
     {
@@ -45,7 +46,7 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     }
     {{/class}}
     ///////////////////////////////////////////////////////////////////////////
-    // Enum Allocations
+    // Enum Allocation
     ///////////////////////////////////////////////////////////////////////////
     {{#enum}}
     {
@@ -73,6 +74,10 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
         {{/constPtrTypeEnabled}}
     }
     {{/enum}}
+}
+
+void meta_generated::DefineModuleFile{{targetName}}{{moduleFileName}}(m::ReflectionDatabase &db)
+{
     ///////////////////////////////////////////////////////////////////////////
     // Global Definitions
     ///////////////////////////////////////////////////////////////////////////
@@ -99,15 +104,6 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
     {{#globalFunction}}
     db.AddGlobalFunction( "{{& qualifiedName}}",
         static_cast<{{& qualifiedSignature}}>( {{& qualifiedName}} ),
-        [](m::ArgumentList &args)
-        { {{#isVoidReturnType}}
-            {{> invocationBody}};
-
-            return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
-            return m::Variant {
-                {{> invocationBody}}
-            };{{/isVoidReturnType}}
-        },
         {
             {{> metaDataInitializerList}}
         }
@@ -129,7 +125,8 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             };
 
             type.SetEnum<{{& qualifiedName}}>( "{{& displayName}}", {
-                {{#member}} { "{{key}}", {{value}} }{{^isLast}},{{/isLast}} 
+                {{#member}} 
+                    { "{{key}}", {{value}} }{{^isLast}},{{/isLast}} 
                 {{/member}}
             } );
 
@@ -158,54 +155,33 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             type.LoadBaseClasses( db, typeID, { 
                 {{#baseClass}}typeof( {{& name}} ){{^isLast}},{{/isLast}} {{/baseClass}} 
             } );
+            {{#arrayTypeEnabled}}
+            // Array Constructor
+			type.SetArrayConstructor<{{& qualifiedName}}>( );{{/arrayTypeEnabled}}
 
             // Constructors
-            {{#constructor}}
+            {{#constructor}}{{#enableNonDynamic}}
             type.AddConstructor<{{& templateParameters}}>(
-                [](m::ArgumentList &args)
-                {
-                    return m::Variant { 
-                        {{> invocationBody}}
-                    };
-                }, 
                 {
                     {{> metaDataInitializerList}}
-                },
-                false
+                }
             );
-            {{/constructor}}
+            {{/enableNonDynamic}}{{/constructor}}
             // Dynamic Constructors
             {{#dynamicConstructor}}
-            type.AddConstructor<{{& templateParameters}}>(
-                [](m::ArgumentList &args)
-                {
-                    return m::Variant { 
-                        {{> dynamicInvocationBody}}
-                    };
-                }, 
+            type.AddConstructor<{{& dynamicTemplateParameters}}>( 
                 {
                     {{> metaDataInitializerList}}
-                },
-                true
+                }
             );
             {{/dynamicConstructor}}
             // Fields
             {{#field}}
-            type.AddField<{{parentQualifiedName}}, {{type}}>( "{{& displayName}}",
-                {{#isGetterAccessible}}[](const m::Variant &obj)
-                {
-                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
-
-                    return m::Variant { {{> getterBody}} };
-                },{{/isGetterAccessible}}{{^isGetterAccessible}}
-                nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
-                [](m::Variant &obj, const m::Variant &value)
-                {
-                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
-
-                    {{> setterBody}}
-                },{{/isSetterAccessible}}{{^isSetterAccessible}}
-                nullptr,{{/isSetterAccessible}}
+            type.AddField<{{& parentQualifiedName}}, {{& type}}>( "{{& displayName}}",
+                {{#isGetterAccessible}}{{> getterBody}},{{/isGetterAccessible}}{{^isGetterAccessible}}
+                ((m::FieldGetter<{{& parentQualifiedName}}, {{& type}}, true>::Signature))nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
+                {{> setterBody}},{{/isSetterAccessible}}{{^isSetterAccessible}}
+                (m::FieldSetter<{{& parentQualifiedName}}, {{& type}}, true>::Signature)nullptr,{{/isSetterAccessible}}
                 {
                     {{> metaDataInitializerList}}
                 }
@@ -213,16 +189,10 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             {{/field}}
             // Static Fields
             {{#staticField}}
-            type.AddStaticField<{{& parentQualifiedName}}, {{type}}>( "{{& displayName}}",
-                {{#isGetterAccessible}}[](void)
-                {
-                    return m::Variant { {{> getterBody}} };
-                },{{/isGetterAccessible}}{{^isGetterAccessible}}
+            type.AddStaticField<{{& parentQualifiedName}}, {{& type}}>( "{{& displayName}}",
+                {{#isGetterAccessible}}{{> getterBody}},{{/isGetterAccessible}}{{^isGetterAccessible}}
                 nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
-                [](const m::Argument &value)
-                {
-                    {{> setterBody}}
-                },{{/isSetterAccessible}}{{^isSetterAccessible}}
+                {{> setterBody}},{{/isSetterAccessible}}{{^isSetterAccessible}}
                 nullptr,{{/isSetterAccessible}}
                 {
                     {{> metaDataInitializerList}}
@@ -233,17 +203,6 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             {{#method}}
             type.AddMethod( "{{name}}",
                 static_cast<{{& qualifiedSignature}}>( &{{parentQualifiedName}}::{{name}} ),
-                [](m::Variant &obj, m::ArgumentList &args)
-                { 
-                    auto &instance = obj.GetValue<{{parentQualifiedName}}>( );
-                    {{#isVoidReturnType}}
-                    instance.{{> invocationBody}};
-
-                    return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
-                    return m::Variant {
-                        instance.{{> invocationBody}}
-                    };{{/isVoidReturnType}}
-                },
                 {
                     {{> metaDataInitializerList}}
                 }
@@ -253,15 +212,6 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             {{#staticMethod}}
             type.AddStaticMethod<{{parentQualifiedName}}>( "{{name}}",
                 static_cast<{{& qualifiedSignature}}>( {{parentQualifiedName}}::{{& qualifiedName}} ),
-                [](m::ArgumentList &args)
-                { {{#isVoidReturnType}}
-                    {{parentQualifiedName}}::{{> invocationBody}};
-
-                    return m::Variant { };{{/isVoidReturnType}}{{^isVoidReturnType}}
-                    return m::Variant {
-                        {{parentQualifiedName}}::{{> invocationBody}}
-                    };{{/isVoidReturnType}}
-                },
                 {
                     {{> metaDataInitializerList}}
                 }
@@ -270,4 +220,4 @@ m::ReflectionDatabase::Initializer {{targetName}}Initializer([] {
             m::TypeInfo<{{& qualifiedName}}>::Defined = true;
         }
     }{{/class}}
-});
+}

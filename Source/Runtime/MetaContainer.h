@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** MetaContainer.h
 ** --------------------------------------------------------------------------*/
@@ -15,7 +15,7 @@ namespace ursine
         class MetaContainer
         {
         public:
-            MetaManager &GetMeta(void);
+            const MetaManager &GetMeta(void) const;
 
         private:
             MetaContainer &operator=(const MetaContainer &rhs) = delete;

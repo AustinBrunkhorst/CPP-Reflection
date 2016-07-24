@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** CursorType.cpp
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "CursorType.h"

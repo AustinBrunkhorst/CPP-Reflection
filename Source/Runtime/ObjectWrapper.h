@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** ObjectWrapper.h
 ** --------------------------------------------------------------------------*/
@@ -8,10 +8,14 @@
 
 #include "VariantBase.h"
 
+#include "JsonConfig.h"
+
 namespace ursine
 {
     namespace meta
     {
+        class Object;
+
         class ObjectWrapper : public VariantBase
         {
         public:
@@ -28,6 +32,8 @@ namespace ursine
 
             VariantBase *Clone(void) const override;
 
+            void OnSerialize(Json::object &output) const override;
+            void OnDeserialize(const Json &input) override;
         private:
             Object *m_object;
         };

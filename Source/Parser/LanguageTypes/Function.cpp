@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Function.cpp
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Function.h"
@@ -35,15 +41,7 @@ TemplateData Function::CompileTemplate(const ReflectionParser *context) const
     if (m_parent)
         data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
     
-    data[ "isVoidReturnType" ] = 
-        utils::TemplateBool( m_returnType == kReturnTypeVoid );
-
     data[ "qualifiedSignature" ] = getQualifiedSignature( );
-    
-    data[ "invocationBody" ] = 
-        context->LoadTemplatePartial( kPartialFunctionInvocation );
-
-    data[ "argument" ] = compileSignatureTemplate( );
 
     m_metaData.CompileTemplateData( data, context );
 
@@ -60,7 +58,7 @@ bool Function::isAccessible(void) const
 
 std::string Function::getQualifiedSignature(void) const
 {
-    auto argsList = boost::algorithm::join( m_signature, ", " );
+    auto argsList = boost::join( m_signature, ", " );
 
     return (boost::format( "%1%(*)(%2%)" ) % m_returnType % argsList).str( );
 }

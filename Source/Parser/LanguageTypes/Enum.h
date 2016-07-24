@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Enum.h
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "LanguageType.h"
@@ -25,12 +31,6 @@ public:
     TemplateData CompileTemplate(
         const ReflectionParser *context
     ) const override;
-
-    static void LoadAnonymous(
-        std::vector<Global*> &output, 
-        const Cursor &cursor, 
-        const Namespace &currentNamespace
-    );
 
 private:
     std::string m_name;

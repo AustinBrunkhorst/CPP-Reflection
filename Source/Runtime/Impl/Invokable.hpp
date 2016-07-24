@@ -1,7 +1,11 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Invokable.hpp
+** --------------------------------------------------------------------------*/
+
 #include "Type.h"
 #include "TypeUnpacker.hpp"
-
-#include <boost/functional/hash.hpp>
 
 namespace std
 {
@@ -12,11 +16,13 @@ namespace std
             const ursine::meta::InvokableSignature &signature
         ) const
         {
+            hash<ursine::meta::TypeID> hasher;
+
             size_t seed = 0;
 
             // combine the hash of all type IDs in the signature
             for (auto &type : signature)
-                boost::hash_combine( seed, type.GetID( ) );
+                seed ^= hasher( type.GetID( ) ) + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 
             return seed;
         }

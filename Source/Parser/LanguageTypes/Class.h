@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Class.h
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "LanguageType.h"
@@ -28,7 +34,7 @@ public:
     Class(const Cursor &cursor, const Namespace &currentNamespace);
     virtual ~Class(void);
 
-    bool ShouldCompile(void) const;
+    virtual bool ShouldCompile(void) const;
 
     TemplateData CompileTemplate(
         const ReflectionParser *context

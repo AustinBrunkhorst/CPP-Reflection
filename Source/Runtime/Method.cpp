@@ -1,13 +1,21 @@
-#include "UrsinePrecompiled.h"
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Method.cpp
+** --------------------------------------------------------------------------*/
+
+#include "Precompiled.h"
 
 #include "Method.h"
+
+#include "Common/Logging.h"
 
 namespace ursine
 {
     namespace meta
     {
         Method::Method(void)
-            : Invokable( "INVALID" )
+            : Invokable( )
             , m_isConst( true )
             , m_classType( { Type::Invalid } )
             , m_invoker( nullptr ) { }
@@ -39,20 +47,23 @@ namespace ursine
             ArgumentList &arguments
         ) const
         {
-        #ifdef CONFIG_DEBUG
+        #if defined(_DEBUG)
 
             UAssert( IsValid( ), 
-                "Invalid method invoked" );
+                "Invalid method invoked." 
+            );
 
-            UAssert( instance.IsConst( ) && !m_isConst, 
-                "Non-const method invoked on const object" )
+            UAssert( !(instance.IsConst( ) && !m_isConst), 
+                "Non-const method invoked on const object." 
+            );
 
             UAssert( instance.GetType( ) == m_classType, 
-                "Incompatible method invoked with instance" );
+                "Incompatible method invoked with instance." 
+            );
 
         #endif
 
-            return m_invoker( instance, arguments );
+            return m_invoker->Invoke( instance, arguments );
         }
     }
 }

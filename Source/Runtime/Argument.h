@@ -1,10 +1,12 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Argument.h
 ** --------------------------------------------------------------------------*/
 
 #pragma once
+
+#include "Type.h"
 
 #include <vector>
 

@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Method.cpp
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Class.h"
@@ -27,21 +33,13 @@ bool Method::ShouldCompile(void) const
 
 TemplateData Method::CompileTemplate(const ReflectionParser *context) const
 {
-    TemplateData data = { TemplateData::Type::Object };
+    TemplateData data { TemplateData::Type::Object };
 
     data[ "name" ] = m_name;
         
     data[ "parentQualifiedName" ] = m_parent->m_qualifiedName;
-    
-    data[ "isVoidReturnType" ] = 
-        utils::TemplateBool( m_returnType == kReturnTypeVoid );
 
     data[ "qualifiedSignature" ] = getQualifiedSignature( );
-
-    data[ "invocationBody" ] = 
-        context->LoadTemplatePartial( kPartialMethodInvocation );
-
-    data[ "argument" ] = compileSignatureTemplate( );
 
     m_metaData.CompileTemplateData( data, context );
 
@@ -50,13 +48,21 @@ TemplateData Method::CompileTemplate(const ReflectionParser *context) const
 
 bool Method::isAccessible(void) const
 {
-    return m_accessModifier == CX_CXXPublic && 
-           !m_metaData.GetFlag( kMetaDisable );
+    if (m_accessModifier != CX_CXXPublic)
+        return false;
+
+    // if the parent wants white listed method, then we must have 
+    // the enable flag
+    if (m_parent->GetMetaData( ).GetFlag( native_property::WhiteListMethods ))
+        return m_metaData.GetFlag( native_property::Enable );
+
+    // must not be explicitly disabled
+    return !m_metaData.GetFlag( native_property::Disable );
 }
 
 std::string Method::getQualifiedSignature(void) const
 {
-    auto argsList = boost::algorithm::join( m_signature, ", " );
+    auto argsList = boost::join( m_signature, ", " );
 
     std::string constNess = m_isConst ? " const" : "";
 

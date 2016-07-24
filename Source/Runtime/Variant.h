@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Variant.h
 ** --------------------------------------------------------------------------*/
@@ -9,15 +9,17 @@
 #include "VariantBase.h"
 #include "VariantPolicy.h"
 
+#include "ArrayConfig.h"
 #include "TypeConfig.h"
 
-#include <vector>
-#include <memory>
+#include "Object.h"
 
 namespace ursine
 {
     namespace meta
     {
+        class Argument;
+
         class Variant
         {
         public:
@@ -29,7 +31,7 @@ namespace ursine
             template<typename T>
             Variant(
                 T *data, 
-                variant_policy::WrapObject, 
+                variant_policy::WrapObject,
                 typename std::enable_if< 
                     std::is_base_of<Object, T>::value 
                 >::type* = nullptr
@@ -38,16 +40,38 @@ namespace ursine
             template<typename T>
             Variant(T &data);
 
-            // non-const r-value references, excluding other variants
+            template<typename T>
+            Variant(T &data, variant_policy::NoCopy);
+
+            // non-const r-value references, excluding other variants and arguments
             template<typename T>
             Variant(T &&data, 
                 typename std::enable_if< 
-                    !std::is_same<Variant&, T>::value 
+                    !std::is_same<Variant, T>::value 
                 >::type* = nullptr,
                 typename std::enable_if< 
                     !std::is_const<T>::value 
+                >::type* = nullptr,
+                typename std::enable_if< 
+                    !std::is_same<Argument, T>::value
                 >::type* = nullptr
             );
+
+            // array types (non-const)
+            template<typename T>
+            Variant(Array<T> &rhs);
+
+            // array types (const)
+            template<typename T>
+            Variant(const Array<T> &rhs);
+
+            // r-value array types (non-const)
+            template<typename T>
+            Variant(Array<T> &&rhs);
+
+            // r-value array types (const)
+            template<typename T>
+            Variant(const Array<T> &&rhs);
 
             Variant(const Variant &rhs);
             Variant(Variant &&rhs);
@@ -63,6 +87,7 @@ namespace ursine
             operator bool(void) const;
 
             Type GetType(void) const;
+            ArrayWrapper GetArray(void) const;
 
             void Swap(Variant &other);
 
@@ -72,13 +97,17 @@ namespace ursine
             double ToDouble(void) const;
             std::string ToString(void) const;
 
+            Json SerializeJson(void) const;
+
             template<typename T>
             T &GetValue(void) const;
 
             bool IsValid(void) const;
             bool IsConst(void) const;
+            bool IsArray(void) const;
 
         private:
+            friend class Type;
             friend class Argument;
             friend class Destructor;
 

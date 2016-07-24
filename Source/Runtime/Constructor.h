@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Constructor.h
 ** --------------------------------------------------------------------------*/
@@ -10,7 +10,9 @@
 
 #include "Invokable.h"
 
-#include <functional>
+#include "ConstructorInvoker.h"
+
+#include <memory>
 
 namespace ursine
 {
@@ -23,16 +25,18 @@ namespace ursine
             , public Invokable
         {
         public:
-            typedef std::function<Variant(ArgumentList&)> Invoker;
-
             Constructor(void);
+            Constructor(const Constructor &rhs);
+            Constructor(const Constructor &&rhs);
             
             Constructor(
                 Type classType, 
                 InvokableSignature signature, 
-                Invoker invoker, 
+                ConstructorInvokerBase *invoker, 
                 bool isDynamic
             );
+
+            Constructor &operator=(const Constructor &&rhs);
 
             static const Constructor &Invalid(void);
 
@@ -51,7 +55,7 @@ namespace ursine
 
             Type m_classType;
 
-            Invoker m_invoker;
+            std::shared_ptr<ConstructorInvokerBase> m_invoker;
         };
     }
 }

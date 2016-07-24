@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** Enum.cpp
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "LanguageTypes/Enum.h"
@@ -14,7 +20,7 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     , m_name( cursor.GetType( ).GetDisplayName( ) )
     , m_qualifiedName( m_name )
 {
-    auto displayName = m_metaData.GetNativeString( kMetaDisplayName );
+    auto displayName = m_metaData.GetNativeString( native_property::DisplayName );
 
     if (displayName.empty( ))
         m_displayName = m_qualifiedName;
@@ -28,7 +34,13 @@ Enum::Enum(const Cursor &cursor, const Namespace &currentNamespace)
     for (auto &child : cursor.GetChildren( ))
     {
         if (child.GetKind( ) == CXCursor_EnumConstantDecl)
-            m_values.emplace_back( this, child );
+        {
+            MetaDataManager valueMeta( child );
+
+            // don't add disabled values
+            if (!valueMeta.GetFlag( native_property::Disable ))
+                m_values.emplace_back( this, child );
+        }
     }
 }
 
@@ -72,24 +84,7 @@ TemplateData Enum::CompileTemplate(const ReflectionParser *context) const
     return data;
 }
 
-void Enum::LoadAnonymous(
-    std::vector<Global*> &output, 
-    const Cursor &cursor, 
-    const Namespace &currentNamespace
-)
-{
-    for (auto &child : cursor.GetChildren( ))
-    {
-        if (child.GetKind( ) == CXCursor_EnumConstantDecl)
-        {
-            output.emplace_back( 
-                new Global( child, currentNamespace, nullptr ) 
-            );
-        }
-    }
-}
-
 bool Enum::isAccessible(void) const
 {
-    return m_metaData.GetFlag( kMetaEnable );
+    return m_metaData.GetFlag( native_property::Enable );
 }

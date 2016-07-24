@@ -1,3 +1,9 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** EnumContainer.hpp
+** --------------------------------------------------------------------------*/
+
 namespace ursine
 {
     namespace meta
@@ -5,21 +11,35 @@ namespace ursine
         template<typename EnumType>
         EnumContainer<EnumType>::EnumContainer(
             const std::string &name, 
-            const Table &table
+            const Initializer &initializer
         )
             : EnumBase( name, Type::Invalid )
-            , m_table( table ) { }
+        {
+            for (auto &pair : initializer)
+            {
+                m_keys.emplace_back( pair.first );
+
+                m_keyToValue.emplace( pair );
+            }
+        }
 
         ///////////////////////////////////////////////////////////////////////
 
         template<typename EnumType>
         EnumContainer<EnumType>::EnumContainer(
             const std::string &name, 
-            const Table &table, 
+            const Initializer &initializer,
             TypeID owner
         )
             : EnumBase( name, owner )
-            , m_table( table ) { }
+        {
+            for (auto &pair : initializer)
+            {
+                m_keys.emplace_back( pair.first );
+
+                m_keyToValue.emplace( pair );
+            }
+        }
 
         ///////////////////////////////////////////////////////////////////////
 
@@ -34,20 +54,15 @@ namespace ursine
         template<typename EnumType>
         Type EnumContainer<EnumType>::GetUnderlyingType(void) const
         {
-            return typeof( typename std::underlying_type< EnumType >::type );
+            return typeof( typename std::underlying_type<EnumType>::type );
         }
 
         ///////////////////////////////////////////////////////////////////////
 
         template<typename EnumType>
-        std::vector<std::string> EnumContainer<EnumType>::GetKeys(void) const
+        const std::vector<std::string> &EnumContainer<EnumType>::GetKeys(void) const
         {
-            std::vector<std::string> keys;
-
-            for (auto &entry : m_table)
-                keys.emplace_back( entry.first );
-
-            return keys;
+            return m_keys;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -57,7 +72,7 @@ namespace ursine
         {
             std::vector<Variant> values;
 
-            for (auto &entry : m_table)
+            for (auto &entry : m_keyToValue)
                 values.emplace_back( entry.second );
 
             return values;
@@ -82,7 +97,7 @@ namespace ursine
 
             auto &converted = value.GetValue<EnumType>( );
 
-            for (auto &entry : m_table)
+            for (auto &entry : m_keyToValue)
             {
                 if (entry.second == converted)
                     return entry.first;
@@ -96,10 +111,10 @@ namespace ursine
         template<typename EnumType>
         Variant EnumContainer<EnumType>::GetValue(const std::string &key) const
         {
-            auto search = m_table.find( key );
+            auto search = m_keyToValue.find( key );
 
             // not found
-            if (search == m_table.end( ))
+            if (search == m_keyToValue.end( ))
                 return Variant( );
 
             return Variant( search->second );

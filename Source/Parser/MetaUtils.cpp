@@ -1,10 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
+**
+** MetaUtils.cpp
+** --------------------------------------------------------------------------*/
+
 #include "Precompiled.h"
 
 #include "MetaUtils.h"
 
-#include <iostream>
-
 #include <boost/algorithm/string/join.hpp>
+
+#include <iostream>
 
 namespace utils
 {
@@ -22,12 +28,39 @@ namespace utils
         return value ? TemplateData::Type::True : TemplateData::Type::False;
     }
 
+    std::string GetQualifiedName(const CursorType &type)
+    {
+        if (type.GetKind( ) != CXType_Typedef)
+            return type.GetDisplayName( );
+
+        auto declaration = type.GetDeclaration( );
+
+        auto parent = declaration.GetLexicalParent( );
+
+        Namespace parentNamespace;
+
+        // walk up to the root namespace
+        while (parent.GetKind( ) == CXCursor_Namespace)
+        {
+            parentNamespace.emplace( parentNamespace.begin( ), parent.GetDisplayName( ) );
+
+            parent = parent.GetLexicalParent( );
+        }
+
+        // add the display name as the end of the namespace
+        parentNamespace.emplace_back(
+            type.GetDisplayName( )
+        );
+
+        return boost::join( parentNamespace, "::" );
+    }
+
     std::string GetQualifiedName(
         const std::string &displayName, 
         const Namespace &currentNamespace
     )
     {
-        auto name = boost::algorithm::join( currentNamespace, "::" );
+        auto name = boost::join( currentNamespace, "::" );
 
         if (!currentNamespace.empty( ))
             name += "::";
@@ -97,6 +130,40 @@ namespace utils
         output << text;
 
         output.close( );
+    }
+
+    boost::filesystem::path MakeRelativePath(const boost::filesystem::path &from, const boost::filesystem::path &to)
+    {
+        // Start at the root path and while they are the same then do nothing then when they first
+        // diverge take the remainder of the two path and replace the entire from path with ".."
+        // segments.
+        auto itFrom = from.begin( );
+        auto itTo = to.begin( );
+
+        // Loop through both
+        while (itFrom != from.end( ) && itTo != to.end( ) && (*itTo) == (*itFrom))
+        {
+            ++itTo;
+            ++itFrom;
+        }
+
+        boost::filesystem::path finalPath;
+
+        while (itFrom != from.end( ))
+        {
+            finalPath /= "..";
+
+            ++itFrom;
+        }
+
+        while (itTo != to.end( ))
+        {
+            finalPath /= *itTo;
+
+            ++itTo;
+        }
+
+        return finalPath;
     }
 
     void FatalError(const std::string &error)

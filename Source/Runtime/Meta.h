@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------------
-** © 201x Austin Brunkhorst, All Rights Reserved.
+** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
 ** Meta.h
 ** --------------------------------------------------------------------------*/
@@ -26,5 +26,6 @@
 #include <Field.h>
 #include <Method.h>
 #include <Function.h>
+#include <Global.h>
 
 #endif
