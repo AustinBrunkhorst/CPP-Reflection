@@ -1,8 +1,10 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 
 project(MetaParser CXX)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../CMake")
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../CMake")
+
+include(Precompiled)
 
 set(HEADER_FILES
     Cursor.h
@@ -99,14 +101,49 @@ add_executable(MetaParser ${HEADER_FILES} ${SOURCE_FILES})
 # statically link with Boost & LibClang
 target_link_libraries(MetaParser ${Boost_LIBRARIES} ${LLVM_LIBCLANG_LIBRARY})
 
+set_precompiled_header(MetaParser Precompiled.h Precompiled.cpp)
+
 if (MSVC)
-    # disable MSVC security warnings
+    # disable security warnings
     add_definitions(-D_CRT_SECURE_NO_WARNINGS=1)
+
+     # treat warnings as errors
+    target_compile_options(MetaParser PUBLIC /WX)
+
+    # multi process compilation
+    target_compile_options(MetaParser PUBLIC /MP)
+
+	# detect version of Visual Studio
+	if (MSVC10)
+        set(VS_VERSION "10")
+    elseif (MSVC11)
+        set(VS_VERSION "11")
+    elseif (MSVC12)
+        set(VS_VERSION "12")
+    elseif (MSVC14)
+        set(VS_VERSION "14")
+    endif()
+
+	# cmake is gross sometimes
+    set(_PROGRAM_FILES_x86 "ProgramFiles(x86)")
+    set(PROGRAM_FILES_x86 "$ENV{${_PROGRAM_FILES_x86}}")
+    set(SYSTEM_INCLUDES "${PROGRAM_FILES_x86}/Microsoft Visual Studio ${VS_VERSION}.0/VC/include")
+
+    # normalize slashes
+    string(REPLACE "\\" "/" SYSTEM_INCLUDES "${SYSTEM_INCLUDES}")
+
+    # visual studio seems to have issues with escape characters in post build commands
+    set_property(TARGET MetaParser APPEND PROPERTY COMPILE_DEFINITIONS SYSTEM_INCLUDE_DIRECTORY="${SYSTEM_INCLUDES}")
+else ()
+    message(FATAL_ERROR "System include directories not implemented for this compiler.")
 endif ()
 
-# copy shared libraries on post build
+# copy shared libraries and resources on post build
 add_custom_command(TARGET MetaParser POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_if_different
         ${LLVM_LIBCLANG_SHARED_LIBRARY}
+        $<TARGET_FILE_DIR:MetaParser>
+	COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_LIST_DIR}/../../Resources"
         $<TARGET_FILE_DIR:MetaParser>
 )

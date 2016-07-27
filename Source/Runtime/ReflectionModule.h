@@ -8,8 +8,6 @@
 
 #include "ReflectionDatabase.h"
 
-#define CONSTRUCT_MODULE(module) meta_generated::Module##module _##module( db );
-
 #define DECLARE_REFLECTION_MODULE(module)                            \
     namespace meta_generated                                         \
     {                                                                \
@@ -20,6 +18,8 @@
             ~Module##module(void);                                   \
         };                                                           \
     }                                                                \
+
+#define UsingModule(module) meta_generated::Module##module _##module( db );
 
 namespace ursine
 {

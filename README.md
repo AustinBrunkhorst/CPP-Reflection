@@ -233,7 +233,7 @@ int main(void)
     Field volumeField = soundEffectType.GetField( "volume" );
     
     // meta data for the volume field
-    MetaManager &volumeMeta = soundEffectType.GetMeta( );
+    MetaManager &volumeMeta = volumeField.GetMeta( );
     
     // getting the "Range" property, then casting the variant as a range
     Range volumeRange = volumeMeta.GetProperty( typeof( Range ) ).GetValue<Range>( );
@@ -313,7 +313,7 @@ struct SoundEffect
 {
     float volume;
 
-    void Load(const char *filename);
+    void Load(const std::string &filename);
 };
 
 int main(void)
@@ -334,7 +334,7 @@ int main(void)
     volumeField.GetValue( effect );
 
     // effect.Load is called
-    loadMethod.Invoke( effect, { "Explosion.wav" } );
+    loadMethod.Invoke( effect, std::string { "Explosion.wav" } );
 
     return 0;
 }

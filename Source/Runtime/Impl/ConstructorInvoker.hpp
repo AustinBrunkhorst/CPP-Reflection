@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Common/Logging.h"
+#include "../Common/Logging.h"
 
 namespace ursine
 {

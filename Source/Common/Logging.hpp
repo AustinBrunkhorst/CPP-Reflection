@@ -21,14 +21,18 @@ namespace ursine
             const Args&... args
         )
         {
-            std::cerr << "Assertion failed." << std::endl;
+            std::cerr << "----- Assertion Failed -----" << std::endl
+                      << "----------------------------" << std::endl;
 
             std::fprintf( stderr, format.c_str( ), args... );
 
-            std::cerr << std::endl << std::endl;
+            std::cerr << std::endl;
+            std::cerr << "----------------------------" << std::endl;
             std::cerr << "file: " << file << std::endl;
             std::cerr << "function: " << function << std::endl;
             std::cerr << "line: " << line << std::endl;
+            std::cerr << "----------------------------" << std::endl;
+            std::cerr << std::endl;
 
             std::abort( );
         }

@@ -4,6 +4,8 @@
 ** Argument.cpp
 ** --------------------------------------------------------------------------*/
 
+#include "Precompiled.h"
+
 #include "Type.h"
 
 #include "Argument.h"

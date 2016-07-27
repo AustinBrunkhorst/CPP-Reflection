@@ -5,7 +5,7 @@
 ** --------------------------------------------------------------------------*/
 
 #include "Type.h"
-#include "Common/Compiler.h"
+#include "../Common/Compiler.h"
 
 #if defined(COMPILER_MSVC)
 

@@ -4,6 +4,8 @@
 ** VariantContainer.cpp
 ** --------------------------------------------------------------------------*/
 
+#include "Precompiled.h"
+
 #include "VariantContainer.h"
 
 #include "Type.h"

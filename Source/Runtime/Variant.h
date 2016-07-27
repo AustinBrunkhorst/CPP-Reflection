@@ -9,7 +9,7 @@
 #include "VariantBase.h"
 #include "VariantPolicy.h"
 
-#include "ArrayConfig.h"
+#include "Array.h"
 #include "TypeConfig.h"
 
 #include "Object.h"

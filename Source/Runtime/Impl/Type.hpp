@@ -9,6 +9,8 @@
 
 #include "Constructor.h"
 
+#include "../Common/Logging.h"
+
 namespace std
 {
     template<>

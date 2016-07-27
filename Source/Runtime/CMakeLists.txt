@@ -1,12 +1,16 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.3)
 
 project(MetaRuntime CXX)
+
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/../CMake")
+
+include(Precompiled)
 
 set(HEADER_FILES
     VariantPolicy.h
     Argument.h
     ArgumentConfig.h
-    ArrayConfig.h
+    Array.h
     ArrayVariantContainer.h
     ArrayWrapper.h
     ArrayWrapperBase.h
@@ -57,6 +61,7 @@ set(HEADER_FILES
     Variant.h
     VariantBase.h
     VariantContainer.h
+    Impl/Array.hpp
     Impl/EnumContainer.hpp
     Impl/Field.hpp
     Impl/FieldGetter.hpp
@@ -115,6 +120,8 @@ set(SOURCE_FILES
     VariantBase.cpp
 )
 
+set(JSON_SOURCE_FILE "../Common/Lib/json11.cpp")
+
 # allow use of Common and Library directories
 include_directories(..)
 include_directories(../Common)
@@ -127,5 +134,31 @@ add_library(MetaRuntime STATIC
     ${SOURCE_FILES}
 
     # compile the JSON library
-    ../Common/Lib/json11.cpp
+    ${JSON_SOURCE_FILE}
+)
+
+set_precompiled_header(MetaRuntime 
+    Precompiled.h 
+    Precompiled.cpp
+)
+
+if (MSVC)
+    # set JSON source file to ignore the precompiled header use on MSVC
+    set_source_files_properties(
+        ${JSON_SOURCE_FILE} 
+        PROPERTIES COMPILE_FLAGS /Y-
+    )
+
+     # treat warnings as errors
+    target_compile_options(MetaRuntime PUBLIC /WX)
+
+    # multi process compilation
+    target_compile_options(MetaRuntime PUBLIC /MP)
+endif ()
+
+set(META_RUNTIME_INCLUDE_DIRS 
+	"${CMAKE_CURRENT_LIST_DIR}"
+	"${CMAKE_CURRENT_LIST_DIR}/../" 
+	"${CMAKE_CURRENT_LIST_DIR}/../Common/Lib"
+	CACHE STRING "Location of the runtime include directories."
 )

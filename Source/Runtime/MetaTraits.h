@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "ArrayConfig.h"
+#include "Array.h"
 
 namespace ursine
 {
