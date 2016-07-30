@@ -20,9 +20,6 @@ namespace ursine
         class Global : public MetaContainer
         {
         public:
-            typedef std::function<Variant(void)> Getter;
-            typedef std::function<void(const Argument &)> Setter;
-
             Global(void);
 
             Global(

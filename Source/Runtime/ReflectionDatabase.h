@@ -46,11 +46,39 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////////
             ////////////////////////////////////////////////////////////////////////
 
+            // Function Getter, Function Setter
+            template<typename GlobalType, typename GetterType, typename SetterType>
+            void AddGlobal(
+                const std::string &name,
+                GetterType getter,
+                SetterType setter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Function Getter, Raw Setter
+            template<typename GlobalType, typename GetterType>
+            void AddGlobal(
+                const std::string &name,
+                GetterType getter,
+                GlobalType *globalSetter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Raw Getter, Function Setter
+            template<typename GlobalType, typename SetterType>
+            void AddGlobal(
+                const std::string &name,
+                GlobalType *globalGetter,
+                SetterType setter,
+                const MetaManager::Initializer &meta
+            );
+
+            // Raw Getter, Raw Setter
             template<typename GlobalType>
             void AddGlobal(
-                const std::string &name, 
-                Global::Getter getter, 
-                Global::Setter setter, 
+                const std::string &name,
+                GlobalType *globalGetter,
+                GlobalType *globalSetter,
                 const MetaManager::Initializer &meta
             );
 
