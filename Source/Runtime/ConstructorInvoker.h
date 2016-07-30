@@ -12,13 +12,14 @@ namespace ursine
 {
     namespace meta
     {
+        class Variant;
+        class Argument;
+
         template<typename ClassType, bool IsDynamic, bool IsObjectWrapped, typename ...ArgTypes>
         class ConstructorInvoker : public ConstructorInvokerBase
         {
         public:
-            static const size_t ArgCount = sizeof...( ArgTypes );
-
-            static_assert( ArgCount <= MaxArgumentCount,
+            static_assert( THIS_ARG_COUNT <= MaxArgumentCount,
                 "Constructor has too many arguments. It's time to generate more overloads." 
             );
 

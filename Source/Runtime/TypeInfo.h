@@ -8,6 +8,20 @@
 
 #include "TypeConfig.h"
 
+#include "../Common/Compiler.h"
+
+#include <type_traits>
+
+#if defined(COMPILER_CLANG) || defined(COMPILER_GNU)
+
+#define IsTriviallyDefaultConstructible(x) std::has_trivial_default_constructor<x>::value
+
+#else
+
+#define IsTriviallyDefaultConstructible(x) std::is_trivially_default_constructible<x>::value
+
+#endif
+
 namespace ursine
 {
     namespace meta
@@ -17,7 +31,6 @@ namespace ursine
         template<typename T>
         struct TypeInfo
         {
-            static TypeID ID;
             static bool Defined;
 
             static void Register(TypeID id, TypeData &data, bool beingDefined);
@@ -26,16 +39,16 @@ namespace ursine
             template<typename U = T>
             static void addDefaultConstructor(
                 TypeData &data, 
-                typename std::enable_if< 
-                    !std::is_trivially_default_constructible<U>::value 
+                typename std::enable_if<
+                    !IsTriviallyDefaultConstructible(U)
                 >::type* = nullptr
             );
 
             template<typename U = T>
             static void addDefaultConstructor(
                 TypeData &data, 
-                typename std::enable_if< 
-                    std::is_trivially_default_constructible<U>::value 
+                typename std::enable_if<
+                    IsTriviallyDefaultConstructible(U)
                 >::type* = nullptr
             );
 

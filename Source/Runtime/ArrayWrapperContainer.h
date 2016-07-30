@@ -7,12 +7,14 @@
 #pragma once
 
 #include "ArrayWrapperBase.h"
-#include "Argument.h"
 
 namespace ursine
 {
     namespace meta
     {
+        class Variant;
+        class Argument;
+
         template<typename T>
         class ArrayWrapperContainer : public ArrayWrapperBase
         {

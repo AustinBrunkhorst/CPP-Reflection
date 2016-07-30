@@ -6,9 +6,9 @@
 
 #include "Precompiled.h"
 
-#include "Invokable.h"
-
 #include "Constructor.h"
+#include "Invokable.h"
+#include "Type.h"
 
 #include "Common/Logging.h"
 
@@ -24,7 +24,7 @@ namespace ursine
         Constructor::Constructor(void)
             : Invokable( )
             , m_isDynamic( false )
-            , m_classType( { Type::Invalid } )
+            , m_classType( InvalidTypeID )
             , m_invoker( nullptr ) { }
 
         Constructor::Constructor(const Constructor &rhs)
@@ -62,7 +62,7 @@ namespace ursine
         Constructor &Constructor::operator=(const Constructor &&rhs)
         {
             m_isDynamic = rhs.m_isDynamic;
-            m_classType = rhs.m_classType;
+            m_classType= rhs.m_classType;
             m_invoker = std::move( rhs.m_invoker );
 
             m_signature = std::move( rhs.m_signature );

@@ -23,9 +23,9 @@
     REGISTER_NATIVE_TYPE( type* )           \
     REGISTER_NATIVE_TYPE( const type* )     \
 
-#define REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY(type)           \
-    REGISTER_NATIVE_TYPE_VARIANTS( type )                     \
-    types[ TypeInfo<type>::ID ].SetArrayConstructor<type>( ); \
+#define REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY(type)         \
+    REGISTER_NATIVE_TYPE_VARIANTS( type )                   \
+    types[ typeidof( type ) ].SetArrayConstructor<type>( ); \
 
 namespace ursine
 {
@@ -35,7 +35,7 @@ namespace ursine
             : types( 1 )
             , m_nextID( 1 )
         {
-            types[ Type::Invalid ].name = "UNKNOWN";
+            types[ InvalidTypeID ].name = "UNKNOWN";
 
             // register all of the native type variants explicity, before
             // anything else
@@ -47,7 +47,7 @@ namespace ursine
             REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY( double );
             REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY( std::string );
 
-            auto &stringType = types[ TypeInfo<std::string>::ID ];
+            auto &stringType = types[ typeidof( std::string ) ];
 
             // explicitly add default constructors for string
 
@@ -76,7 +76,7 @@ namespace ursine
 
             // already defined
             if (search != ids.end( ))
-                return Type::Invalid;
+                return InvalidTypeID;
 
             types.emplace_back( name );
 

@@ -40,7 +40,7 @@ namespace ursine
             for (auto &base : classes)
             {
                 // skip invalid types
-                if (base.m_id == Type::Invalid)
+                if (base == Type::Invalid( ))
                     continue;
 
                 baseClasses.insert( base );

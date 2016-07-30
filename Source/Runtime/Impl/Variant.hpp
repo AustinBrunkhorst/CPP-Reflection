@@ -6,9 +6,9 @@
 
 #pragma once
 
-#include "VariantContainer.h"
-#include "ObjectWrapper.h"
-#include "ArrayVariantContainer.h"
+#include "../VariantContainer.h"
+#include "../ObjectWrapper.h"
+#include "../ArrayVariantContainer.h"
 
 namespace ursine
 {
@@ -39,33 +39,38 @@ namespace ursine
         ///////////////////////////////////////////////////////////////////////
 
         template<typename T>
-        Variant::Variant(T &data)
+        Variant::Variant(
+            T &data,
+            DISABLE_VARIANT
+        )
             : m_isConst( std::is_pointer<T>::value && std::is_const<T>::value )
             , m_base( new VariantContainer< CleanedType<T> >( data ) )
         {
         
         }
 
+        ///////////////////////////////////////////////////////////////////////
+
         template<typename T>
-        Variant::Variant(T &data, variant_policy::NoCopy)
+        Variant::Variant(
+            T &data,
+            variant_policy::NoCopy,
+            DISABLE_VARIANT
+        )
             : m_isConst( std::is_pointer<T>::value && std::is_const<T>::value )
             , m_base( new VariantContainer< CleanedType<T>& >( data ) )
         {
+
         }
 
         ///////////////////////////////////////////////////////////////////////
 
         template<typename T>
-        Variant::Variant(T &&data, 
-            typename std::enable_if< 
-                !std::is_same<Variant, T>::value 
-            >::type*, 
-            typename std::enable_if< 
-                !std::is_const<T>::value 
-            >::type*,
-            typename std::enable_if<
-                !std::is_same<Argument, T>::value
-            >::type*
+        Variant::Variant(
+            T &&data,
+            DISABLE_VARIANT,
+            DISABLE_ARGUMENT,
+            DISABLE_CONST
         )
             : m_isConst( false )
             , m_base( 

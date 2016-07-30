@@ -8,6 +8,7 @@
 
 #include "Macros.h"
 
+#include "TypeID.h"
 #include "TypeConfig.h"
 #include "InvokableConfig.h"
 #include "ArgumentConfig.h"
@@ -41,8 +42,6 @@ namespace ursine
             typedef std::set<Type> Set;
             typedef std::function<Variant(const Variant &, const Field &)> SerializationGetterOverride;
 
-            static const TypeID Invalid = 0;
-
             Type(void);
             Type(const Type &rhs);
             Type(TypeID id, bool isArray = false);
@@ -57,6 +56,13 @@ namespace ursine
             bool operator>=(const Type &rhs) const;
             bool operator==(const Type &rhs) const;
             bool operator!=(const Type &rhs) const;
+
+            /** @brief Gets an instance of an invalid type.
+             */
+            static const Type &Invalid(void);
+
+            ///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
 
             /** @brief Gets the internal id of the type.
              */
@@ -181,50 +187,6 @@ namespace ursine
              *  @return Meta Data Manager for this type.
              */
             const MetaManager &GetMeta(void) const;
-
-            /** @brief Instantiates an instance of this type with the given 
-             *         constructor signature. NOTE: it is much faster to cache 
-             *         the appropriate constructor first, then call 
-             *         Invoke( ) manually.
-             *  @param arguments List of arguments to forward to the 
-             *                   type constructor.
-             *  @return Variant representing the newly created type instance.
-             */
-            Variant CreateVariadic(const ArgumentList &arguments) const;
-
-            /** @brief Same as CreateVariadic( ), except it uses the dynamic
-             *         constructor and returns the class pointer type.
-             *  @param arguments List of arguments to forward to the 
-             *                   type constructor.
-             *  @return Variant representing a pointer to the newly 
-             *          created type instance. NOTE: client is responsible for
-             *          memory management, either through type.Destroy( ) or
-             *          directly calling the underlying pointer's deconstructor
-             */
-            Variant CreateDynamicVariadic(const ArgumentList &arguments) const;
-
-            /** @brief Instantiates an instance of this type with the given 
-             *         constructor signature. NOTE: it is much faster to cache 
-             *         the appropriate constructor first, then call 
-             *         Invoke( ) manually.
-             *  @param arguments List of arguments to forward to the 
-             *                   type constructor.
-             *  @return Variant representing the newly created type instance.
-             */
-            template<typename ...Args>
-            Variant Create(Args &&...args) const;
-
-           /** @brief Same as Create( ), except it uses the dynamic
-             *         constructor and returns the class pointer type.
-             * @param arguments List of arguments to forward to the 
-             *                   type constructor.
-             * @return Variant representing a pointer to the newly 
-             *          created type instance. NOTE: client is responsible for
-             *          memory management, either through type.Destroy( ) or
-             *          directly calling the underlying pointer's deconstructor
-             */
-            template<typename ...Args>
-            Variant CreateDynamic(Args &&...args) const;
 
             /** @brief Deconstructs the given object instance.
              *  @param instance Variant object instance to destruct.

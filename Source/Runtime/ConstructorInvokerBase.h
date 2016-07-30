@@ -7,13 +7,15 @@
 #pragma once
 
 #include "InvokableConfig.h"
-
-#include "Variant.h"
+#include "ArgumentConfig.h"
 
 namespace ursine
 {
     namespace meta
     {
+        class Variant;
+        class Argument;
+
         class ConstructorInvokerBase
         {
         public:

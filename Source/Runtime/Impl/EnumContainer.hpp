@@ -4,6 +4,8 @@
 ** EnumContainer.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
 namespace ursine
 {
     namespace meta
@@ -13,7 +15,7 @@ namespace ursine
             const std::string &name, 
             const Initializer &initializer
         )
-            : EnumBase( name, Type::Invalid )
+            : EnumBase( name, InvalidTypeID )
         {
             for (auto &pair : initializer)
             {

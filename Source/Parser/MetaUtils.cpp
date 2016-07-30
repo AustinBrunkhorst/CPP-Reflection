@@ -10,7 +10,8 @@
 
 #include <boost/algorithm/string/join.hpp>
 
-#include <iostream>
+#include <fstream>
+#include <exception>
 
 namespace utils
 {
@@ -91,7 +92,7 @@ namespace utils
                   << "\" for reading." << std::endl;
             error << strerror( errno );
 
-            throw std::exception( error.str( ).c_str( ) );
+            throw std::runtime_error( error.str( ) );
         }
 
         input.seekg( 0, std::ios::end );
@@ -124,7 +125,7 @@ namespace utils
                   << std::endl;
             error << strerror( errno );
 
-            throw std::exception( error.str( ).c_str( ) );
+            throw std::runtime_error( error.str( ) );
         }
 
         output << text;

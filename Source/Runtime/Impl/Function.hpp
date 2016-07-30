@@ -4,6 +4,8 @@
 ** Function.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
 namespace ursine
 {
     namespace meta

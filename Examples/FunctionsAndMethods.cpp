@@ -3,6 +3,8 @@
 #include "TestTypes.h"
 #include "TestProperties.h"
 
+#include "TypeCreator.h"
+
 using namespace ursine::meta;
 
 int main(void)
@@ -16,7 +18,7 @@ int main(void)
     Method loadMethod = soundEffectType.GetMethod( "Load" );
 
     // creates an instance of a sound effect
-    Variant effect = soundEffectType.Create( );
+    Variant effect = TypeCreator::Create( soundEffectType );
 
     // effect.volume is now 85
     volumeField.SetValue( effect, 85.0f );

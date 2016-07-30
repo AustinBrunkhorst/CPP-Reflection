@@ -4,6 +4,8 @@
 ** VoidFunctionInvoker.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
 namespace ursine
 {
     namespace meta
@@ -14,9 +16,7 @@ namespace ursine
         public:
             typedef void (*Signature)(ArgTypes...);
 
-            static const size_t ArgCount = sizeof...( ArgTypes );
-
-            static_assert( ArgCount <= MaxArgumentCount,
+            static_assert( THIS_ARG_COUNT <= MaxArgumentCount,
                 "Function has too many arguments. It's time to generate more overloads." 
             );
 
@@ -25,9 +25,9 @@ namespace ursine
 
             Variant Invoke(const ArgumentList &arguments) override
             {
-                UAssert( arguments.size( ) == ArgCount,
+                UAssert( arguments.size( ) == THIS_ARG_COUNT,
                     "Invalid function arguments.\nExpected %i args but got %i.",
-                    ArgCount,
+                    THIS_ARG_COUNT,
                     arguments.size( )
                 );
 

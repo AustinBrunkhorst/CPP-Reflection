@@ -4,6 +4,8 @@
 ** FunctionInvoker.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
 namespace ursine
 {
     namespace meta
@@ -15,9 +17,9 @@ namespace ursine
         template<typename ReturnType, typename ... ArgTypes>
         Variant FunctionInvoker<ReturnType, ArgTypes...>::Invoke(const ArgumentList &arguments)
         {
-            UAssert( arguments.size( ) == ArgCount,
+            UAssert( arguments.size( ) == THIS_ARG_COUNT,
                 "Invalid function arguments.\nExpected %i args but got %i.",
-                ArgCount,
+                THIS_ARG_COUNT,
                 arguments.size( )
             );
 

@@ -4,6 +4,10 @@
 ** TypeData.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
+#include "../ReflectionDatabase.h"
+
 namespace ursine
 {
     namespace meta

@@ -1,7 +1,7 @@
 /* ----------------------------------------------------------------------------
 ** Copyright (c) 2016 Austin Brunkhorst, All Rights Reserved.
 **
-** GlobalSetterBase.h
+** TypeData.h
 ** --------------------------------------------------------------------------*/
 
 #pragma once
@@ -10,14 +10,17 @@ namespace ursine
 {
     namespace meta
     {
-        class Argument;
+        typedef unsigned TypeID;
 
-        class GlobalSetterBase
+        const TypeID InvalidTypeID = 0;
+
+        template<typename T>
+        struct TypeIDs
         {
-        public:
-            virtual ~GlobalSetterBase(void) { }
-
-            virtual void SetValue(const Argument &value) = 0;
+            static TypeID ID;
         };
+
+        template<typename T>
+        TypeID TypeIDs<T>::ID = InvalidTypeID;
     }
 }

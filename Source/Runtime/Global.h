@@ -20,9 +20,6 @@ namespace ursine
         class Global : public MetaContainer
         {
         public:
-            typedef std::function<Variant(void)> Getter;
-            typedef std::function<void(const Argument &)> Setter;
-
             Global(void);
 
             Global(
@@ -30,7 +27,7 @@ namespace ursine
                 Type type, 
                 GlobalGetterBase *getter, 
                 GlobalSetterBase *setter, 
-                Type parentType = Type::Invalid
+                Type parentType = Type::Invalid( )
             );
 
             static const Global &Invalid(void);

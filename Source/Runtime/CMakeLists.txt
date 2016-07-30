@@ -55,15 +55,16 @@ set(HEADER_FILES
     ReflectionModule.h
     RuntimeMetaProperties.h
     Type.h
+    TypeCreator.h
     TypeConfig.h
     TypeData.h
     TypeInfo.h
+    TypeID.h
     Variant.h
     VariantBase.h
     VariantContainer.h
     Impl/Array.hpp
     Impl/EnumContainer.hpp
-    Impl/Field.hpp
     Impl/FieldGetter.hpp
     Impl/FieldSetter.hpp
     Impl/Function.hpp
@@ -77,6 +78,7 @@ set(HEADER_FILES
     Impl/MethodInvoker.hpp
     Impl/ReflectionDatabase.hpp
     Impl/Type.hpp
+    Impl/TypeCreator.hpp
     Impl/TypeData.hpp
     Impl/TypeInfo.hpp
     Impl/TypeUnpacker.hpp
@@ -91,7 +93,6 @@ set(HEADER_FILES
     Impl/ArrayWrapperContainer.hpp
     Impl/Constructor.hpp
     Impl/ConstructorInvoker.hpp
-    Impl/Destructor.hpp
     Impl/DestructorInvoker.hpp
 )
 
@@ -115,6 +116,7 @@ set(SOURCE_FILES
     ReflectionDatabase.cpp
     ReflectionModule.cpp
     Type.cpp
+    TypeCreator.cpp
     TypeData.cpp
     Variant.cpp
     VariantBase.cpp
@@ -149,11 +151,19 @@ if (MSVC)
         PROPERTIES COMPILE_FLAGS /Y-
     )
 
-     # treat warnings as errors
-    target_compile_options(MetaRuntime PUBLIC /WX)
-
-    # multi process compilation
-    target_compile_options(MetaRuntime PUBLIC /MP)
+    target_compile_options(MetaRuntime 
+        PUBLIC
+        # treat warnings as errors
+        /WX 
+        # multi process compilation
+        /MP
+    )
+else ()
+    target_compile_options(MetaRuntime 
+        PUBLIC
+        -std=c++11
+        -Wno-format-security
+    )
 endif ()
 
 set(META_RUNTIME_INCLUDE_DIRS 

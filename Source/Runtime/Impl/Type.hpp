@@ -4,10 +4,12 @@
 ** Type.hpp
 ** --------------------------------------------------------------------------*/
 
-#include "TypeInfo.h"
+#pragma once
+
 #include "TypeUnpacker.hpp"
 
-#include "Constructor.h"
+#include "../Variant.h"
+//#include "../Constructor.h"
 
 #include "../Common/Logging.h"
 
@@ -31,50 +33,6 @@ namespace ursine
         Type Type::Get(T &&obj)
         {
             return { typeof( T ) };
-        }
-
-        ///////////////////////////////////////////////////////////////////////
-
-        template<typename ... Args>
-        Variant Type::Create(Args &&...args) const
-        {
-            static InvokableSignature signature;
-
-            static bool initial = true;
-
-            if (initial)
-            {
-                TypeUnpacker<Args...>::Apply( signature );
-
-                initial = false;
-            }
-
-            auto &constructor = GetConstructor( signature );
-
-            ArgumentList arguments { std::forward<Args>( args )... };
-
-            return constructor.Invoke( arguments );
-        }
-
-        template <typename ... Args>
-        Variant Type::CreateDynamic(Args&&... args) const
-        {
-            static InvokableSignature signature;
-
-            static bool initial = true;
-
-            if (initial)
-            {
-                TypeUnpacker<Args...>::Apply( signature );
-
-                initial = false;
-            }
-
-            auto &constructor = GetDynamicConstructor( signature );
-
-            ArgumentList arguments { std::forward<Args>( args )... };
-
-            return constructor.Invoke( arguments );
         }
 
         ///////////////////////////////////////////////////////////////////////

@@ -6,30 +6,32 @@
 
 #pragma once
 
-#include "Type.h"
-
 namespace ursine
 {
     namespace meta
     {
         template<typename T>
         Argument::Argument(const T &data)
-            : m_type( typeof( T ) )
+            : m_typeID( typeidof( T ) )
+            , m_isArray( meta_traits::IsArray<T>::value )
             , m_data( reinterpret_cast<const void*>( std::addressof( data ) ) )
         {
             static_assert( !std::is_same< Argument, T >::value,
-                "Cannot use Argument as an argument" );
+                "Cannot use Argument as an argument"
+            );
         }
 
         ///////////////////////////////////////////////////////////////////////
 
         template<typename T>
         Argument::Argument(T &data)
-            : m_type( typeof( T ) )
+            : m_typeID( typeidof( T ) )
+            , m_isArray( meta_traits::IsArray<T>::value )
             , m_data( reinterpret_cast<const void*>( std::addressof( data ) ) )
         {
             static_assert( !std::is_same< Argument, T >::value,
-                "Cannot use Argument as an argument" );
+                "Cannot use Argument as an argument"
+            );
         }
 
         ///////////////////////////////////////////////////////////////////////

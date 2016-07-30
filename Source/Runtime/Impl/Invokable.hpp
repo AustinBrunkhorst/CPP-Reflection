@@ -4,7 +4,9 @@
 ** Invokable.hpp
 ** --------------------------------------------------------------------------*/
 
-#include "Type.h"
+#pragma once
+
+#include "../Type.h"
 #include "TypeUnpacker.hpp"
 
 namespace std

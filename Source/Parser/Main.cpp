@@ -12,6 +12,7 @@
 #include "Switches.h"
 
 #include <chrono>
+#include <fstream>
 
 void parse(const po::variables_map &cmdLine);
 
@@ -110,7 +111,7 @@ int main(int argc, char *argv[])
 
         parse( cmdLine );
     }
-    catch (std::exception &e) 
+    catch (std::exception &e)
     {
         utils::FatalError( e.what( ) );
     }
@@ -209,7 +210,7 @@ void parse(const po::variables_map &cmdLine)
     {
         parser.GenerateFiles( );
     }
-    catch(std::exception &e)
+    catch (std::exception &e)
     {
         utils::FatalError( e.what( ) );
     }

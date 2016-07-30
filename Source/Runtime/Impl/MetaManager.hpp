@@ -4,7 +4,9 @@
 ** MetaManager.hpp
 ** --------------------------------------------------------------------------*/
 
-#include "TypeConfig.h"
+#pragma once
+
+#include "../Type.h"
 
 namespace ursine
 {
@@ -14,7 +16,8 @@ namespace ursine
         const PropertyType *MetaManager::GetProperty(void) const
         {
             static_assert( std::is_base_of<MetaProperty, PropertyType>::value, 
-                "Type must be a MetaProperty." );
+                "Type must be a MetaProperty." 
+	        );
             
             static const auto type = typeof( PropertyType );
 

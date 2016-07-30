@@ -7,6 +7,7 @@
 #include "Precompiled.h"
 
 #include "ObjectWrapper.h"
+#include "Object.h"
 
 #include "Type.h"
 

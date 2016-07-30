@@ -7,6 +7,7 @@
 #include "Precompiled.h"
 
 #include "Type.h"
+#include "TypeCreator.h"
 
 #include "Variant.h"
 #include "Enum.h"
@@ -35,7 +36,7 @@ namespace ursine
         }
 
         Type::Type(void)
-            : m_id( Invalid )
+            : m_id( InvalidTypeID )
             , m_isArray( false ) { }
 
         ///////////////////////////////////////////////////////////////////////
@@ -54,7 +55,7 @@ namespace ursine
 
         Type::operator bool(void) const
         {
-            return m_id != Invalid;
+            return m_id != InvalidTypeID;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -107,6 +108,15 @@ namespace ursine
         bool Type::operator!=(const Type &rhs) const
         {
             return m_id != rhs.m_id;
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+
+        const Type &Type::Invalid(void)
+        {
+            static const Type invalid { InvalidTypeID };
+
+            return invalid;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -191,7 +201,7 @@ namespace ursine
             auto search = gDatabase.ids.find( name );
 
             if (search == gDatabase.ids.end( ))
-                return { Invalid };
+                return Invalid( );
 
             return { search->second };
         }
@@ -215,7 +225,7 @@ namespace ursine
 
         bool Type::IsValid(void) const
         {
-            return m_id != Invalid;
+            return m_id != InvalidTypeID;
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -282,32 +292,6 @@ namespace ursine
         const MetaManager &Type::GetMeta(void) const
         {
             return gDatabase.types[ m_id ].meta;
-        }
-
-        ///////////////////////////////////////////////////////////////////////
-
-        Variant Type::CreateVariadic(const ArgumentList &arguments) const
-        {
-            InvokableSignature signature;
-
-            for (auto &argument : arguments)
-                signature.emplace_back( argument.GetType( ) );
-
-            auto &constructor = GetConstructor( signature );
-
-            return constructor.Invoke( arguments );
-        }
-
-        Variant Type::CreateDynamicVariadic(const ArgumentList &arguments) const
-        {
-            InvokableSignature signature;
-
-            for (auto &argument : arguments)
-                signature.emplace_back( argument.GetType( ) );
-
-            auto &constructor = GetDynamicConstructor( signature );
-
-            return constructor.Invoke( arguments );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -762,7 +746,7 @@ namespace ursine
                     return enumValue;
                 
                 // use the default value as we couldn't find the key
-                return Create( );
+                return TypeCreator::Create( *this );
             }
             else if (*this == typeof( std::string ))
             {

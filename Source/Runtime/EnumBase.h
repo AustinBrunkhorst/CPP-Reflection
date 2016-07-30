@@ -15,7 +15,6 @@ namespace ursine
 {
     namespace meta
     {
-        class Type;
         class Variant;
         class Argument;
 

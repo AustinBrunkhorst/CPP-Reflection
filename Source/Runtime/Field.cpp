@@ -14,8 +14,8 @@ namespace ursine
     namespace meta
     {
         Field::Field(void)
-            : m_type( { Type::Invalid } ) 
-            , m_classType( { Type::Invalid } )
+            : m_type( Type::Invalid( ) )
+            , m_classType( Type::Invalid( ) )
             , m_name( "INVALID" )
             , m_getter( nullptr ) 
             , m_setter( nullptr ) { }

@@ -4,7 +4,11 @@
 ** TypeInfo.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
 #include "../Common/Compiler.h"
+#include "../TypeData.h"
+#include "../TypeID.h"
 
 #if defined(COMPILER_MSVC)
 
@@ -20,9 +24,6 @@ namespace ursine
     namespace meta
     {
         template<typename T>
-        TypeID TypeInfo<T>::ID = Type::Invalid;
-
-        template<typename T>
         bool TypeInfo<T>::Defined = false;
 
         template<typename T>
@@ -33,12 +34,12 @@ namespace ursine
         )
         {
             // already defined
-            if (id == Type::Invalid)
+            if (id == Type::Invalid( ).GetID( ))
                 return;
 
-            ID = id;
+            TypeIDs<T>::ID = id;
         
-            typedef typename std::remove_pointer< std::decay<T>::type >::type Decayed;
+            typedef typename std::remove_pointer< typename std::decay<T>::type >::type Decayed;
 
             data.isClass = std::is_class< Decayed >::value;
             data.isEnum = std::is_enum< Decayed >::value;
@@ -56,11 +57,11 @@ namespace ursine
         }
 
         template<typename T>
-        template<typename U = T>
+        template<typename U>
         void TypeInfo<T>::addDefaultConstructor(
             TypeData &data, 
             typename std::enable_if< 
-                !std::is_trivially_default_constructible<U>::value 
+                !IsTriviallyDefaultConstructible(U)
             >::type*
         )
         {
@@ -68,11 +69,11 @@ namespace ursine
         }
 
         template<typename T>
-        template<typename U = T>
+        template<typename U>
         void TypeInfo<T>::addDefaultConstructor(
             TypeData &data, 
-            typename std::enable_if< 
-                std::is_trivially_default_constructible<U>::value 
+            typename std::enable_if<
+                IsTriviallyDefaultConstructible(U)
             >::type*
         )
         {
@@ -84,24 +85,24 @@ namespace ursine
         }
 
         template<typename T>
-        template<typename U = T>
+        template<typename U>
         void TypeInfo<T>::applyTrivialAttributes(
             TypeData &data, 
             typename std::enable_if< 
                 !std::is_trivial<U>::value 
-            >::type* = nullptr
+            >::type*
         )
         {
             // do nothing
         }
 
         template<typename T>
-        template<typename U = T>
+        template<typename U>
         void TypeInfo<T>::applyTrivialAttributes(
             TypeData &data, 
             typename std::enable_if< 
                 std::is_trivial<U>::value 
-            >::type* = nullptr
+            >::type*
         )
         {
             data.SetDestructor<T>( );

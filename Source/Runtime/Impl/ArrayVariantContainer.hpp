@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "ArrayWrapper.h"
+#include "../ArrayWrapper.h"
 
 namespace ursine
 {

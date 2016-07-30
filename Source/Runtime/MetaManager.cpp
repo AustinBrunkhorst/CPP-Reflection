@@ -6,9 +6,10 @@
 
 #include "Precompiled.h"
 
-#include "Type.h"
-
 #include "MetaManager.h"
+
+#include "Type.h"
+#include "Variant.h"
 
 #include "Common/Logging.h"
 
@@ -66,7 +67,7 @@ namespace ursine
             auto search = m_properties.find( type );
 
             if (search == m_properties.end( ))
-                return Variant { };
+                return { };
 
             return ObjectVariant( search->second );
         }
@@ -89,7 +90,7 @@ namespace ursine
             PropertyList properties;
 
             for (auto &property : m_properties)
-                properties.push_back( ObjectVariant( property.second ) );
+                properties.emplace_back( ObjectVariant( property.second ) );
 
             return properties;
         }

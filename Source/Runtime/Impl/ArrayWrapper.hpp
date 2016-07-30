@@ -4,7 +4,9 @@
 ** ArrayWrapper.hpp
 ** --------------------------------------------------------------------------*/
 
-#include "ArrayWrapperContainer.h"
+#pragma once
+
+#include "../ArrayWrapperContainer.h"
 
 namespace ursine
 {

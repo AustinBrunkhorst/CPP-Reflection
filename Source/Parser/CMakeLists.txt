@@ -98,8 +98,10 @@ include_directories(../Common/Lib)
 # them in the solution explorer without them being added to the list of sources
 add_executable(MetaParser ${HEADER_FILES} ${SOURCE_FILES})
 
+link_directories(${LLVM_LIBRARY_DIR})
+
 # statically link with Boost & LibClang
-target_link_libraries(MetaParser ${Boost_LIBRARIES} ${LLVM_LIBCLANG_LIBRARY})
+target_link_libraries(MetaParser ${Boost_LIBRARIES} ${LIBCLANG_LIBRARY})
 
 set_precompiled_header(MetaParser Precompiled.h Precompiled.cpp)
 
@@ -107,11 +109,13 @@ if (MSVC)
     # disable security warnings
     add_definitions(-D_CRT_SECURE_NO_WARNINGS=1)
 
-     # treat warnings as errors
-    target_compile_options(MetaParser PUBLIC /WX)
-
-    # multi process compilation
-    target_compile_options(MetaParser PUBLIC /MP)
+    target_compile_options(MetaRuntime 
+        PUBLIC
+        # treat warnings as errors
+        /WX 
+        # multi process compilation
+        /MP
+    )
 
 	# detect version of Visual Studio
 	if (MSVC10)
@@ -131,19 +135,29 @@ if (MSVC)
 
     # normalize slashes
     string(REPLACE "\\" "/" SYSTEM_INCLUDES "${SYSTEM_INCLUDES}")
+else ()
+    target_compile_options(MetaParser
+        PUBLIC -std=c++11
+    )
 
+    set(SYSTEM_INCLUDES "/usr/include/c++/${CMAKE_CXX_COMPILER_VERSION}")
+endif ()
+
+if (SYSTEM_INCLUDES)
     # visual studio seems to have issues with escape characters in post build commands
     set_property(TARGET MetaParser APPEND PROPERTY COMPILE_DEFINITIONS SYSTEM_INCLUDE_DIRECTORY="${SYSTEM_INCLUDES}")
 else ()
     message(FATAL_ERROR "System include directories not implemented for this compiler.")
 endif ()
 
-# copy shared libraries and resources on post build
+# copy resources on post build
 add_custom_command(TARGET MetaParser POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        ${LLVM_LIBCLANG_SHARED_LIBRARY}
-        $<TARGET_FILE_DIR:MetaParser>
+    # mustache templates directory
 	COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/../../Resources"
+        $<TARGET_FILE_DIR:MetaParser>
+    # LibClang shared library
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        ${LIBCLANG_SHARED_LIBRARY}
         $<TARGET_FILE_DIR:MetaParser>
 )

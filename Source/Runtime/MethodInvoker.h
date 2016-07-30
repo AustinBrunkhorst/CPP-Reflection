@@ -19,9 +19,7 @@ namespace ursine
             typedef ReturnType (ClassType::*Signature)(ArgTypes...);
             typedef ReturnType (ClassType::*ConstSignature)(ArgTypes...) const;
 
-            static const size_t ArgCount = sizeof...( ArgTypes );
-
-            static_assert( ArgCount <= MaxArgumentCount,
+            static_assert( THIS_ARG_COUNT <= MaxArgumentCount,
                 "Method has too many arguments. It's time to generate more overloads." 
             );
 

@@ -40,6 +40,21 @@ meta_parser_prebuild(
 
 add_library(${TEST_MODULE_TARGET} ${META_GENERATED_FILES})
 
+target_link_libraries(${TEST_MODULE_TARGET} MetaRuntime)
+
+if (MSVC)
+	add_compile_options(
+		# treat warnings as errors
+		/WX
+		# multi process compilation
+		/MP
+	)
+else ()
+	add_compile_options(
+		-std=c++11
+	)
+endif ()
+
 macro (add_meta_test TARGET SOURCES)
 	add_executable(${TARGET} 
 		${TEST_HEADERS} 

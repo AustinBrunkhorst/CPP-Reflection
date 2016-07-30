@@ -13,8 +13,8 @@ namespace ursine
     namespace meta
     {
         Global::Global(void)
-            : m_type { Type::Invalid }
-            , m_parentType { Type::Invalid }
+            : m_type( Type::Invalid( ) )
+            , m_parentType( Type::Invalid( ) )
             , m_name( "INVALID" )
             , m_getter( nullptr ) 
             , m_setter( nullptr ) { }

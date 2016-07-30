@@ -12,6 +12,8 @@ namespace ursine
 {
     namespace meta
     {
+        class Argument;
+
         class ArrayWrapper
         {
         public:

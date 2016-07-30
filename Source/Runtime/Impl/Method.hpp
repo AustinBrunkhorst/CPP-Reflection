@@ -4,6 +4,8 @@
 ** Method.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
 #include "TypeUnpacker.hpp"
 
 namespace ursine

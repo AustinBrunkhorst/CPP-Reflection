@@ -4,6 +4,11 @@
 ** ArrayWrapperContainer.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
+#include "../Argument.h"
+#include "../Variant.h"
+
 namespace ursine
 {
     namespace meta

@@ -4,7 +4,9 @@
 ** VariantContainer.hpp
 ** --------------------------------------------------------------------------*/
 
-#include "Type.h"
+#pragma once
+
+#include "../Type.h"
 #include "../Common/Compiler.h"
 
 #if defined(COMPILER_MSVC)
@@ -24,21 +26,21 @@
 
 #define DEFAULT_TYPE_HANDLER_IMPL(typeName)                                                      \
     template<typename T>                                                                         \
-    template<typename U = T>                                                                     \
+    template<typename U>                                                                         \
     typeName VariantContainer<T>::get##typeName(                                                 \
         typename std::enable_if<                                                                 \
             !std::is_convertible<typename meta_traits::TypeOrEnumType<U>::type, typeName>::value \
-        >::type* = nullptr                                                                       \
+        >::type*                                                                                 \
         ) const                                                                                  \
     {                                                                                            \
         return typeName( );                                                                      \
     }                                                                                            \
     template<typename T>                                                                         \
-    template<typename U = T>                                                                     \
+    template<typename U>                                                                         \
     typeName VariantContainer<T>::get##typeName(                                                 \
         typename std::enable_if<                                                                 \
             std::is_convertible<typename meta_traits::TypeOrEnumType<U>::type, typeName>::value  \
-        >::type* = nullptr                                                                       \
+        >::type*                                                                                 \
     ) const                                                                                      \
     {                                                                                            \
         return static_cast<typeName>( m_value );                                                 \
@@ -153,22 +155,22 @@ namespace ursine
         DEFAULT_TYPE_HANDLER_IMPL( double );
 
         template<typename T>
-        template<typename U = T>
+        template<typename U>
         std::string VariantContainer<T>::getString(
             typename std::enable_if<
                 !std::is_arithmetic<U>::value
-            >::type* = nullptr
+            >::type*
         ) const
         {
             return std::string( );
         }
 
         template<typename T>
-        template<typename U = T>
+        template<typename U>
         std::string VariantContainer<T>::getString(
             typename std::enable_if<
                 std::is_arithmetic<U>::value
-            >::type* = nullptr
+            >::type*
         ) const
         {
             return std::to_string( m_value );
@@ -192,7 +194,7 @@ namespace ursine
             Json::object &output,
             typename std::enable_if<
             std::is_pointer<U>::value || !std::is_base_of<Object, U>::value
-            >::type* = nullptr
+            >::type*
         ) const
         {
             // do nothing
@@ -216,7 +218,7 @@ namespace ursine
             const Json &input,
             typename std::enable_if<
                 std::is_pointer<U>::value || !std::is_base_of<Object, U>::value
-            >::type* = nullptr
+            >::type*
         )
         {
             // do nothing

@@ -8,11 +8,15 @@
 
 #include "../Common/Logging.h"
 
+#include "../Variant.h"
+#include "../ArgumentConfig.h"
+#include "../Argument.h"
+
 namespace ursine
 {
     namespace meta
     {
-        ///////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////////////////////////THIS_ARG_COUNT///////
         // Non Dynamic
         ///////////////////////////////////////////////////////////////////////
 
@@ -20,17 +24,15 @@ namespace ursine
         class ConstructorInvoker<ClassType, false, IsObjectWrapped, ArgTypes...> : public ConstructorInvokerBase
         {
         public:
-            static const size_t ArgCount = sizeof...( ArgTypes );
-
-            static_assert( ArgCount <= MaxArgumentCount,
+            static_assert( THIS_ARG_COUNT <= MaxArgumentCount,
                 "Constructor has too many arguments. It's time to generate more overloads."
             );
 
             Variant Invoke(const ArgumentList &arguments) override
             {
-                UAssert( arguments.size( ) == ArgCount,
+                UAssert( arguments.size( ) == THIS_ARG_COUNT,
                     "Invalid constructor arguments.\nExpected %i args but got %i.",
-                    ArgCount,
+                    THIS_ARG_COUNT,
                     arguments.size( )
                 );
 
@@ -178,17 +180,16 @@ namespace ursine
         class ConstructorInvoker<ClassType, true, false, ArgTypes...> : public ConstructorInvokerBase
         {
         public:
-            static const size_t ArgCount = sizeof...( ArgTypes );
 
-            static_assert( ArgCount <= MaxArgumentCount,
+            static_assert( THIS_ARG_COUNT <= MaxArgumentCount,
                 "Constructor has too many arguments. It's time to generate more overloads."
             );
 
             Variant Invoke(const ArgumentList &arguments) override
             {
-                UAssert( arguments.size( ) == ArgCount,
+                UAssert( arguments.size( ) == THIS_ARG_COUNT,
                     "Invalid constructor arguments.\nExpected %i args but got %i.",
-                    ArgCount,
+                    THIS_ARG_COUNT,
                     arguments.size( )
                 );
 
@@ -336,17 +337,15 @@ namespace ursine
         class ConstructorInvoker<ClassType, true, true, ArgTypes...> : public ConstructorInvokerBase
         {
         public:
-            static const size_t ArgCount = sizeof...( ArgTypes );
-
-            static_assert( ArgCount <= MaxArgumentCount,
+            static_assert( THIS_ARG_COUNT <= MaxArgumentCount,
                 "Constructor has too many arguments. It's time to generate more overloads."
             );
 
             Variant Invoke(const ArgumentList &arguments) override
             {
-                UAssert( arguments.size( ) == ArgCount,
+                UAssert( arguments.size( ) == THIS_ARG_COUNT,
                     "Invalid constructor arguments.\nExpected %i args but got %i.",
-                    ArgCount,
+                    THIS_ARG_COUNT,
                     arguments.size( )
                 );
 

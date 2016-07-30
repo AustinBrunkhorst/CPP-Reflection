@@ -104,27 +104,6 @@ Class::Class(const Cursor &cursor, const Namespace &currentNamespace)
     }
 }
 
-Class::~Class(void)
-{
-    for (auto *baseClass : m_baseClasses)
-        delete baseClass;
-
-    for (auto *constructor : m_constructors)
-        delete constructor;
-
-    for (auto *field : m_fields)
-        delete field;
-
-    for (auto *staticField : m_staticFields)
-        delete staticField;
-
-    for (auto *method : m_methods)
-        delete method;
-
-    for (auto *staticMethod : m_staticMethods)
-        delete staticMethod;
-}
-
 bool Class::ShouldCompile(void) const
 {
     return isAccessible( ) && !isNativeType( m_qualifiedName );
@@ -152,7 +131,7 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
 
         int i = 0;
 
-        for (auto *baseClass : m_baseClasses)
+        for (auto &baseClass : m_baseClasses)
         {
             // ignore native types
             if (isNativeType( baseClass->name ))
@@ -181,12 +160,11 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
     {
         TemplateData constructors { TemplateData::Type::List };
 
-        for (auto *ctor : m_constructors)
+        for (auto &ctor : m_constructors)
         {
             if (ctor->ShouldCompile( ))
                 constructors << ctor->CompileTemplate( context );
         }
-            
 
         data[ "constructor" ] = constructors;
         data[ "dynamicConstructor" ] = constructors;
@@ -196,7 +174,7 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
     {
         TemplateData fields { TemplateData::Type::List };
 
-        for (auto *field : m_fields)
+        for (auto &field : m_fields)
         {
             if (field->ShouldCompile( ))
                 fields << field->CompileTemplate( context );
@@ -209,7 +187,7 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
     {
         TemplateData staticFields { TemplateData::Type::List };
 
-        for (auto *staticField : m_staticFields)
+        for (auto &staticField : m_staticFields)
         {
             if (staticField->ShouldCompile( ))
                 staticFields << staticField->CompileTemplate( context );
@@ -222,7 +200,7 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
     {
         TemplateData methods { TemplateData::Type::List };
 
-        for (auto *method : m_methods)
+        for (auto &method : m_methods)
         {
             if (method->ShouldCompile( ))
                 methods << method->CompileTemplate( context );
@@ -235,7 +213,7 @@ TemplateData Class::CompileTemplate(const ReflectionParser *context) const
     {
         TemplateData staticMethods { TemplateData::Type::List };
 
-        for (auto *staticMethod : m_staticMethods)
+        for (auto &staticMethod : m_staticMethods)
         {
             if (staticMethod->ShouldCompile( ))
                 staticMethods << staticMethod->CompileTemplate( context );

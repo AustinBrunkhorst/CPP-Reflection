@@ -1,7 +1,0 @@
-namespace ursine
-{
-    namespace meta
-    {
-
-    }
-}

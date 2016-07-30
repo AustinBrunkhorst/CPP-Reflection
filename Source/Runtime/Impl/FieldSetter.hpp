@@ -4,6 +4,8 @@
 ** FieldSetter.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
 namespace ursine
 {
     namespace meta

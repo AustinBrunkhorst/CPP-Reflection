@@ -19,6 +19,8 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
+#include <fstream>
+
 #define RECURSE_NAMESPACES(kind, cursor, method, ns) \
     if (kind == CXCursor_Namespace)                  \
     {                                                \
@@ -138,7 +140,7 @@ void ReflectionParser::GenerateFiles(void)
         error << "Unable to compile module file header template." << std::endl;
         error << m_moduleFileHeaderTemplate.errorMessage( );
 
-        throw std::exception( error.str( ).c_str( ) );
+        throw std::runtime_error( error.str( ) );
     }
 
     m_moduleFileSourceTemplate = LoadTemplate( kTemplateModuleFileSource );
@@ -150,7 +152,7 @@ void ReflectionParser::GenerateFiles(void)
         error << "Unable to compile module file source template." << std::endl;
         error << m_moduleFileSourceTemplate.errorMessage( );
 
-        throw std::exception( error.str( ).c_str( ) );
+        throw std::runtime_error( error.str( ) );
     }
 
     TemplateData moduleFilesData { TemplateData::Type::List };
@@ -185,7 +187,7 @@ void ReflectionParser::GenerateFiles(void)
             "_"
         );
 
-        moduleFileCache += file.second.name + '\n';
+        moduleFileCache += file.second.name + "\n";
 
         TemplateData moduleFileData { TemplateData::Type::Object };
 
@@ -248,7 +250,7 @@ void ReflectionParser::GenerateFiles(void)
             error << "Unable to compile module source template." << std::endl;
             error << sourceTemplate.errorMessage( );
 
-            throw std::exception( error.str( ).c_str( ) );
+            throw std::runtime_error( error.str( ).c_str( ) );
         }
 
         TemplateData sourceData { TemplateData::Type::Object };
@@ -284,7 +286,7 @@ MustacheTemplate ReflectionParser::LoadTemplate(const std::string &name) const
 
         return text;
     }
-    catch(std::exception &e)
+    catch (std::exception &e)
     {
         std::stringstream error;
 
@@ -383,7 +385,9 @@ void ReflectionParser::buildGlobals(
     Namespace &currentNamespace
 )
 {
-    for (auto &child : cursor.GetChildren( ))
+    auto children = cursor.GetChildren( );
+
+    for (auto &child : children)
     {
         // skip static globals (hidden)
         if (child.GetStorageClass( ) == CX_SC_Static)

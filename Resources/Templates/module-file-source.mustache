@@ -82,16 +82,10 @@ void meta_generated::DefineModuleFile{{targetName}}{{moduleFileName}}(m::Reflect
     // Global Definitions
     ///////////////////////////////////////////////////////////////////////////
     {{#global}}
-    db.AddGlobal<{{& type}}>( "{{& qualifiedName}}",{{#isGetterAccessible}}
-        [](void)
-        {
-            return m::Variant { {{> getterBody}} };
-        },{{/isGetterAccessible}}{{^isGetterAccessible}}
-        nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
-        [](const m::Argument &value)
-        {
-            {{> setterBody}}
-        },{{/isSetterAccessible}}{{^isSetterAccessible}}
+    db.AddGlobal<{{& type}}>( "{{& qualifiedName}}",
+        {{#isGetterAccessible}}{{> getterBody}},{{/isGetterAccessible}}{{^isGetterAccessible}}
+			nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
+        {{> setterBody}},{{/isSetterAccessible}}{{^isSetterAccessible}}
         nullptr,{{/isSetterAccessible}}
         {
             {{> metaDataInitializerList}}
@@ -114,9 +108,9 @@ void meta_generated::DefineModuleFile{{targetName}}{{moduleFileName}}(m::Reflect
     ///////////////////////////////////////////////////////////////////////////
     {{#enum}}
     {
-        auto typeID = m::TypeInfo<{{& qualifiedName}}>::ID;
+        auto typeID = typeidof( {{& qualifiedName}} );
 
-        if (typeID != m::Type::Invalid && !m::TypeInfo<{{& qualifiedName}}>::Defined)
+        if (typeID != m::InvalidTypeID && !m::TypeInfo<{{& qualifiedName}}>::Defined)
         {
             auto &type = db.types[ typeID ];
 
@@ -142,9 +136,9 @@ void meta_generated::DefineModuleFile{{targetName}}{{moduleFileName}}(m::Reflect
      * {{& qualifiedName}}
      */
     {
-        auto typeID = m::TypeInfo<{{& qualifiedName}}>::ID;
+        auto typeID = typeidof( {{& qualifiedName}} );
 
-        if (typeID != m::Type::Invalid && !m::TypeInfo<{{& qualifiedName}}>::Defined)
+        if (typeID != m::InvalidTypeID && !m::TypeInfo<{{& qualifiedName}}>::Defined)
         {
             auto &type = db.types[ typeID ];
 

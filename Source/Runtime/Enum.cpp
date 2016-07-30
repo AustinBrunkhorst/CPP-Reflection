@@ -44,17 +44,17 @@ namespace ursine
 
         Type Enum::GetType(void) const
         {
-            return m_base ? m_base->GetType( ) : Type::Invalid;
+            return m_base ? m_base->GetType( ) : Type::Invalid( );
         }
 
         Type Enum::GetParentType(void) const
         {
-            return m_base ? m_base->GetParentType( ) : Type::Invalid;
+            return m_base ? m_base->GetParentType( ) : Type::Invalid( );
         }
 
         Type Enum::GetUnderlyingType(void) const
         {
-            return m_base ? m_base->GetUnderlyingType( ) : Type::Invalid;
+            return m_base ? m_base->GetUnderlyingType( ) : Type::Invalid( );
         }
 
         std::vector<std::string> Enum::GetKeys(void) const

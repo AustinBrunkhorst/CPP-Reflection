@@ -9,6 +9,9 @@
 #include <vector>
 #include <unordered_map>
 
+// number of arguments within the usage of a dynamic method/function invoker
+#define THIS_ARG_COUNT sizeof...( ArgTypes )
+
 namespace ursine
 {
     namespace meta

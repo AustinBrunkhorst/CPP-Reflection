@@ -4,6 +4,8 @@
 ** MethodInvoker.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
 namespace ursine
 {
     namespace meta
@@ -21,9 +23,9 @@ namespace ursine
         template<typename ClassType, typename ReturnType, typename ... ArgTypes>
         Variant MethodInvoker<ClassType, ReturnType, ArgTypes...>::Invoke(Variant &obj, const ArgumentList &arguments)
         {
-            UAssert( arguments.size( ) == ArgCount,
+            UAssert( arguments.size( ) == THIS_ARG_COUNT,
                 "Invalid method arguments.\nExpected %i args but got %i.",
-                ArgCount,
+                THIS_ARG_COUNT,
                 arguments.size( )
             );
 

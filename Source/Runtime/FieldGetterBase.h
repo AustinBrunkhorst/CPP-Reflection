@@ -10,6 +10,8 @@ namespace ursine
 {
     namespace meta
     {
+        class Variant;
+
         class FieldGetterBase
         {
         public:

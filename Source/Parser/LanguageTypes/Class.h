@@ -32,7 +32,6 @@ class Class : public LanguageType
 
 public:
     Class(const Cursor &cursor, const Namespace &currentNamespace);
-    virtual ~Class(void);
 
     virtual bool ShouldCompile(void) const;
 
@@ -45,15 +44,18 @@ private:
     std::string m_displayName;
     std::string m_qualifiedName;
 
-    std::vector<BaseClass*> m_baseClasses;
-        
-    std::vector<Constructor*> m_constructors;
+    template<typename T>
+    using SharedPtrVector = std::vector<std::shared_ptr<T>>;
 
-    std::vector<Field*> m_fields;
-    std::vector<Global*> m_staticFields;
+    SharedPtrVector<BaseClass> m_baseClasses;
 
-    std::vector<Method*> m_methods;
-    std::vector<Function*> m_staticMethods;
+    SharedPtrVector<Constructor> m_constructors;
+
+    SharedPtrVector<Field> m_fields;
+    SharedPtrVector<Global> m_staticFields;
+
+    SharedPtrVector<Method> m_methods;
+    SharedPtrVector<Function> m_staticMethods;
 
     bool isAccessible(void) const;
 };

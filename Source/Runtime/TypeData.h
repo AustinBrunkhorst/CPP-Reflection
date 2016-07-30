@@ -24,6 +24,8 @@ namespace ursine
 {
     namespace meta
     {
+        struct ReflectionDatabase;
+
         struct TypeData
         {
             bool isEnum : 1;

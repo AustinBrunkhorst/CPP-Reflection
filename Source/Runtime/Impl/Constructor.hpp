@@ -4,7 +4,10 @@
 ** Constructor.hpp
 ** --------------------------------------------------------------------------*/
 
-#include "Variant.h"
+#pragma once
+
+#include "../Variant.h"
+#include "../Argument.h"
 
 namespace ursine
 {

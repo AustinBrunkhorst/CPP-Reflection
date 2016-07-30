@@ -20,7 +20,7 @@ namespace ursine
 
         Variant ArrayWrapper::GetValue(size_t index) const
         {
-            return m_base ? m_base->GetValue( index ) : nullptr;
+            return m_base ? m_base->GetValue( index ) : Variant( );
         }
 
         void ArrayWrapper::SetValue(size_t index, const Argument &value)

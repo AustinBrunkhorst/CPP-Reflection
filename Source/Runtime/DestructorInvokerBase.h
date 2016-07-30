@@ -12,6 +12,8 @@ namespace ursine
 {
     namespace meta
     {
+        class Variant;
+
         class DestructorInvokerBase
         {
         public:

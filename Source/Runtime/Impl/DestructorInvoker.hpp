@@ -4,6 +4,10 @@
 ** DestructorInvoker.hpp
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
+#include "../Variant.h"
+
 namespace ursine
 {
     namespace meta

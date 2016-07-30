@@ -17,7 +17,7 @@ namespace ursine
         Method::Method(void)
             : Invokable( )
             , m_isConst( true )
-            , m_classType( { Type::Invalid } )
+            , m_classType( Type::Invalid( ) )
             , m_invoker( nullptr ) { }
 
         const Method &Method::Invalid(void)

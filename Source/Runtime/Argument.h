@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "Type.h"
+#include "TypeConfig.h"
 
 #include <vector>
 
@@ -41,7 +41,9 @@ namespace ursine
             T &GetValue(void) const;
 
         private:
-            const Type m_type;
+            const TypeID m_typeID;
+            const bool m_isArray;
+
             const void *m_data;
         };
     }

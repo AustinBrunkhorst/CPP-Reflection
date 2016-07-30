@@ -7,8 +7,9 @@
 #pragma once
 
 #include "MetaContainer.h"
-
 #include "Invokable.h"
+
+#include "Type.h"
 
 #include "ConstructorInvoker.h"
 
@@ -18,7 +19,8 @@ namespace ursine
 {
     namespace meta
     {
-        class Type;
+        class Variant;
+        class Argument;
 
         class Constructor
             : public MetaContainer

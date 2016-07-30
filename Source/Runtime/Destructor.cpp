@@ -8,6 +8,8 @@
 
 #include "Destructor.h"
 
+#include "Variant.h"
+
 #include "Common/Logging.h"
 
 namespace ursine
@@ -21,7 +23,7 @@ namespace ursine
 
         Destructor::Destructor(void)
             : Invokable( )
-            , m_classType( { Type::Invalid } ) { }
+            , m_classType( Type::Invalid( ) ) { }
 
         Destructor::Destructor(Type classType, DestructorInvokerBase *invoker)
             : Invokable( kDestructorName )

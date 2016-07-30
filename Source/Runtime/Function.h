@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include "MetaContainer.h"
 #include "Invokable.h"
 
 #include "Variant.h"
@@ -32,7 +33,7 @@ namespace ursine
             Function(
                 const std::string &name, 
                 ReturnType (*function)(ArgTypes...),
-                Type parentType = Type::Invalid
+                Type parentType = Type::Invalid( )
             );
 
             static const Function &Invalid(void);

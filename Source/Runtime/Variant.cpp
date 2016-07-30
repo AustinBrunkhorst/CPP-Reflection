@@ -35,18 +35,18 @@ namespace ursine
             delete m_base;
         }
 
+        Variant &Variant::operator=(const Variant &rhs)
+        {
+            Variant( rhs ).Swap( *this );
+
+            return *this;
+        }
+
         Variant &Variant::operator=(Variant &&rhs)
         {
             rhs.Swap( *this );
 
             Variant( ).Swap( rhs );
-
-            return *this;
-        }
-
-        Variant &Variant::operator=(const Variant &rhs)
-        {
-            Variant( rhs ).Swap( *this );
 
             return *this;
         }
@@ -58,7 +58,7 @@ namespace ursine
 
         Type Variant::GetType(void) const
         {
-            return m_base ? m_base->GetType( ) : Type::Invalid;
+            return m_base ? m_base->GetType( ) : Type::Invalid( );
         }
 
         ArrayWrapper Variant::GetArray(void) const

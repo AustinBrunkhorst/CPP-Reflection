@@ -39,6 +39,11 @@ function(meta_parser_prebuild)
         get_filename_component(BASE_NAME ${HEADER} NAME_WE)
         get_filename_component(EXTENSION ${HEADER} EXT)
 
+        # make sure the path is absolute
+        if (NOT IS_ABSOLUTE ${HEADER})
+            set(DIRECTORY_NAME "${PREBUILD_META_SOURCE_ROOT}/${DIRECTORY_NAME}")
+        endif ()
+
         # skip hpp files
         if (NOT "${EXTENSION}" STREQUAL ".hpp")
             file(RELATIVE_PATH RELATIVE 
@@ -137,7 +142,7 @@ function(meta_parser_build)
     add_custom_command(
         OUTPUT ${BUILD_META_GENERATED_FILES}
         DEPENDS ${BUILD_META_HEADER_FILES}
-        COMMAND call ${BUILD_META_PARSER_EXECUTABLE}
+        COMMAND ${BUILD_META_PARSER_EXECUTABLE}
         --target-name "${BUILD_META_TARGET}"
         --source-root "${BUILD_META_SOURCE_ROOT}"
         --in-source "${BUILD_META_SOURCE_ROOT}/${BUILD_META_SOURCE_FILE}"
