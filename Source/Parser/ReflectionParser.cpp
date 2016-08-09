@@ -196,8 +196,12 @@ void ReflectionParser::GenerateFiles(void)
 
         moduleFilesData << moduleFileData;
 
-        // if the generated file header doesn't exist, we need to regenerate
-        if (m_options.forceRebuild || !metaCacheFileExists || !exists( outputFileHeader ))
+        // if the generated file header/source doesn't exist, we need to regenerate
+        if (m_options.forceRebuild || 
+            !metaCacheFileExists || 
+            !exists( outputFileHeader ) ||
+            !exists( outputFileSource )
+        )
         {
             generateModuleFile( outputFileHeader, outputFileSource, file.first, file.second );
 
@@ -205,20 +209,17 @@ void ReflectionParser::GenerateFiles(void)
         }
 
         auto lastSourceWrite = last_write_time( filePath );
-        auto lastGeneratedWrite = last_write_time( outputFileHeader );
+        auto lastGeneratedHeaderWrite = last_write_time( outputFileHeader );
+        auto lastGeneratedSourceWrite = last_write_time( outputFileSource );
 
         // if the generated file is older than the source file, we need to regenerate
-        if (lastSourceWrite > lastGeneratedWrite)
+        if (lastSourceWrite > lastGeneratedHeaderWrite || lastSourceWrite > lastGeneratedSourceWrite)
             generateModuleFile( outputFileHeader, outputFileSource, file.first, file.second );
     }
 
-    fs::path moduleCacheFileName = m_options.outputModuleFileDirectory;
-
-    moduleCacheFileName /= ".meta-cache";
-
     if (!m_options.forceRebuild && metaCacheFileExists)
     {
-        std::ifstream cacheFile( moduleCacheFileName.string( ) );
+        std::ifstream cacheFile( metaCacheFileName.string( ) );
 
         std::istreambuf_iterator<char> cacheFileBegin( cacheFile );
         std::istreambuf_iterator<char> cacheFileEnd( nullptr );
@@ -235,7 +236,7 @@ void ReflectionParser::GenerateFiles(void)
 
     // update the cache
     utils::WriteText(
-        moduleCacheFileName.string( ),
+        metaCacheFileName.string( ),
         moduleFileCache
     );
 
