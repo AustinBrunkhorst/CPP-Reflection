@@ -1,22 +1,22 @@
 include(CMakeParseArguments)
 
 function(meta_parser_prebuild)
-	set(ONE_VALUE_ARGS
-		TARGET
-		GENERATED_DIR
-		SOURCE_ROOT
-		MODULE_HEADER
-		OUT_MODULE_SOURCE
-		OUT_GENERATED_FILES
-		OUT_INC
-		OUT_SRC
-	)
+    set(ONE_VALUE_ARGS
+        TARGET
+        GENERATED_DIR
+        SOURCE_ROOT
+        MODULE_HEADER
+        OUT_MODULE_SOURCE
+        OUT_GENERATED_FILES
+        OUT_INC
+        OUT_SRC
+    )
 
-	set(MULTI_VALUE_ARGS 
-		HEADER_FILES
-	)
+    set(MULTI_VALUE_ARGS 
+        HEADER_FILES
+    )
 
-	cmake_parse_arguments(PREBUILD_META "" "${ONE_VALUE_ARGS}" "${MULTI_VALUE_ARGS}" ${ARGN})
+    cmake_parse_arguments(PREBUILD_META "" "${ONE_VALUE_ARGS}" "${MULTI_VALUE_ARGS}" ${ARGN})
 
     # source file for this reflection module
     set(MODULE_SOURCE "${PREBUILD_META_GENERATED_DIR}/Module.${PREBUILD_META_TARGET}.Generated.cpp")
@@ -68,25 +68,25 @@ function(meta_parser_prebuild)
 endfunction ()
 
 function(meta_parser_build)
-	set(ONE_VALUE_ARGS
-		TARGET
-		SOURCE_ROOT
-		SOURCE_FILE
-		MODULE_HEADER
-		MODULE_SOURCE_FILE
-		GENERATED_DIR
-		PCH_NAME
-		PARSER_EXECUTABLE
-	)
+    set(ONE_VALUE_ARGS
+        TARGET
+        SOURCE_ROOT
+        SOURCE_FILE
+        MODULE_HEADER
+        MODULE_SOURCE_FILE
+        GENERATED_DIR
+        PCH_NAME
+        PARSER_EXECUTABLE
+    )
 
-	set(MULTI_VALUE_ARGS 
-		DEFINES
-		INCLUDES
-		GENERATED_FILES
-		HEADER_FILES
-	)
+    set(MULTI_VALUE_ARGS 
+        DEFINES
+        INCLUDES
+        GENERATED_FILES
+        HEADER_FILES
+    )
 
-	cmake_parse_arguments(BUILD_META "" "${ONE_VALUE_ARGS}" "${MULTI_VALUE_ARGS}" ${ARGN})
+    cmake_parse_arguments(BUILD_META "" "${ONE_VALUE_ARGS}" "${MULTI_VALUE_ARGS}" ${ARGN})
 
     get_property(DIRECTORIES TARGET ${BUILD_META_TARGET} PROPERTY INCLUDE_DIRECTORIES)
 
@@ -101,15 +101,15 @@ function(meta_parser_build)
     set(INCLUDES_FILE "${BUILD_META_GENERATED_DIR}/Module.${BUILD_META_TARGET}.Includes.txt")
 
     file(WRITE ${INCLUDES_FILE} ${INCLUDES})
-	
+    
     set(DEFINES ${GLOBAL_META_DEFINES} ${BUILD_META_DEFINES})
 
     string(REPLACE " " "" DEFINES_TRIMMED "${DEFINES}")
 
     if ("${DEFINES_TRIMMED}" STREQUAL "")
-    	set(DEFINES_SWITCH )
+        set(DEFINES_SWITCH )
     else ()
-    	set(DEFINES_SWITCH --defines "${DEFINES}")
+        set(DEFINES_SWITCH --defines "${DEFINES}")
     endif ()
 
     # empty source files need to include the precompiled header

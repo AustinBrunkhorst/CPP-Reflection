@@ -117,8 +117,8 @@ if (MSVC)
         /MP
     )
 
-	# detect version of Visual Studio
-	if (MSVC10)
+    # detect version of Visual Studio
+    if (MSVC10)
         set(VS_VERSION "10")
     elseif (MSVC11)
         set(VS_VERSION "11")
@@ -128,7 +128,7 @@ if (MSVC)
         set(VS_VERSION "14")
     endif()
 
-	# cmake is gross sometimes
+    # cmake is gross sometimes
     set(_PROGRAM_FILES_x86 "ProgramFiles(x86)")
     set(PROGRAM_FILES_x86 "$ENV{${_PROGRAM_FILES_x86}}")
     set(SYSTEM_INCLUDES "${PROGRAM_FILES_x86}/Microsoft Visual Studio ${VS_VERSION}.0/VC/include")
@@ -153,7 +153,7 @@ endif ()
 # copy resources on post build
 add_custom_command(TARGET MetaParser POST_BUILD
     # mustache templates directory
-	COMMAND ${CMAKE_COMMAND} -E copy_directory
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
         "${CMAKE_CURRENT_LIST_DIR}/../../Resources"
         $<TARGET_FILE_DIR:MetaParser>
     # LibClang shared library

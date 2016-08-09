@@ -17,7 +17,7 @@ namespace ursine
         {
             static_assert( std::is_base_of<MetaProperty, PropertyType>::value, 
                 "Type must be a MetaProperty." 
-	        );
+            );
             
             static const auto type = typeof( PropertyType );
 

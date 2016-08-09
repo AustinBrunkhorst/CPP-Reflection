@@ -43,28 +43,28 @@ add_library(${TEST_MODULE_TARGET} ${META_GENERATED_FILES})
 target_link_libraries(${TEST_MODULE_TARGET} MetaRuntime)
 
 if (MSVC)
-	add_compile_options(
-		# treat warnings as errors
-		/WX
-		# multi process compilation
-		/MP
-	)
+    add_compile_options(
+        # treat warnings as errors
+        /WX
+        # multi process compilation
+        /MP
+    )
 else ()
-	add_compile_options(
-		-std=c++11
-	)
+    add_compile_options(
+        -std=c++11
+    )
 endif ()
 
 macro (add_meta_test TARGET SOURCES)
-	add_executable(${TARGET} 
-		${TEST_HEADERS} 
-		${TEST_META_GENERATED_HEADERS} 
-		${TEST_META_GENERATED_SOURCES} 
-		${SOURCES}
-	)
+    add_executable(${TARGET} 
+        ${TEST_HEADERS} 
+        ${TEST_META_GENERATED_HEADERS} 
+        ${TEST_META_GENERATED_SOURCES} 
+        ${SOURCES}
+    )
 
-	target_link_libraries(${TARGET} MetaRuntime ${TEST_MODULE_TARGET})
-	set_property(TARGET ${TARGET} PROPERTY FOLDER Tests)
+    target_link_libraries(${TARGET} MetaRuntime ${TEST_MODULE_TARGET})
+    set_property(TARGET ${TARGET} PROPERTY FOLDER Tests)
 endmacro ()
 
 add_meta_test(MetaProperties MetaProperties.cpp)

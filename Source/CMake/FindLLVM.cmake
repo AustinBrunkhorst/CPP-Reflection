@@ -29,8 +29,8 @@ find_path(LLVM_INCLUDE_DIRS
 
 if (LIBCLANG_USE_STATIC_LIBRARY)
     # find static library directory
-    find_path(LLVM_STATIC_LIBRARY_DIR
-        NAMES ${LIBCLANG_LIBRARY_NAME}
+    find_path(LLVM_LIBRARY_DIR
+        NAMES ${LIBCLANG_STATIC_LIBRARY_NAME}
         PATHS ${LLVM_SEARCH_PATHS}
         PATH_SUFFIXES "lib" "bin"
     )

@@ -84,7 +84,7 @@ void meta_generated::DefineModuleFile{{targetName}}{{moduleFileName}}(m::Reflect
     {{#global}}
     db.AddGlobal<{{& type}}>( "{{& qualifiedName}}",
         {{#isGetterAccessible}}{{> getterBody}},{{/isGetterAccessible}}{{^isGetterAccessible}}
-			nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
+            nullptr,{{/isGetterAccessible}}{{#isSetterAccessible}}
         {{> setterBody}},{{/isSetterAccessible}}{{^isSetterAccessible}}
         nullptr,{{/isSetterAccessible}}
         {

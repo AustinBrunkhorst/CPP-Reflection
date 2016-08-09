@@ -24,7 +24,7 @@ namespace ursine
 {
     namespace meta
     {
-        struct ReflectionDatabase;
+        class ReflectionDatabase;
 
         struct TypeData
         {
