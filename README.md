@@ -86,7 +86,7 @@ Just like the other two targets you'll do the following -
 
     cmake --build .
 
-Remember to add the extra switches for defining LLVM_ROOT and BOOST_ROOT if you skipped adding them as an environment variable.
+Remember to add the extra switches for defining `LLVM_ROOT` and `BOOST_ROOT` if you skipped adding them as an environment variable.
 
 All of the examples build to a simple executable that demonstrates the specific features/functionality in use.
 
