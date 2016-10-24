@@ -9,7 +9,7 @@ int main(void)
 {
     MetaInitialize( UsingModule( TestModule ) );
 
-    // you can also use type meta::Type::Get( "SoundEffect" ) based on a string name
+    // you can also use type meta::Type::GetFromName( "SoundEffect" ) based on a string name
     Type soundEffectType = typeof( SoundEffect );
 
     // the volume field in the SoundEffect struct
