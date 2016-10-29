@@ -109,7 +109,7 @@ if (MSVC)
     # disable security warnings
     add_definitions(-D_CRT_SECURE_NO_WARNINGS=1)
 
-    target_compile_options(MetaRuntime 
+    target_compile_options(MetaParser
         PUBLIC
         # treat warnings as errors
         /WX 
