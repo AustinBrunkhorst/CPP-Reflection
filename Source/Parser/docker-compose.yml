@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  cppaas:
+    image: cppaas
+    build:
+      context: ./CppAaS
+      dockerfile: Dockerfile
