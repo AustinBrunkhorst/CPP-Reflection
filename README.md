@@ -1,5 +1,13 @@
 # C++ Reflection
 
+**Update - November 2017**
+
+I am in the process of refactoring this codebase to be more of a professional solution to C++ reflection, with an emphasis on "bring your own pipeline". My original blog post is down for the time being due to a migration of web hosting. Expect it to be back up shortly.
+
+I am excited to start working with the community, so please don't hesitate to contribute to this project if it's something you're interested in.
+
+[![Join the chat at https://gitter.im/CPP-Reflection/Lobby](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/CPP-Reflection/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Preface
 I worked on a complete reflection pipeline starting in the summer of 2015 for a game project / editor. My intent by creating this repository was to share my experience and how I came about developing it. The response from the community motivated me to make it a tad bit more official by allowing others to consume and build it easily, rather than just giving you code and saying "fill in the pieces".
 
