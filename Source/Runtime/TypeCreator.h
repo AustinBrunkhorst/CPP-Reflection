@@ -40,7 +40,7 @@ namespace ursine
              *         constructor signature. NOTE: it is much faster to cache
              *         the appropriate constructor first, then call
              *         Invoke( ) manually.
-             *  @param arguments List of arguments to forward to the
+             *  @param args List of arguments to forward to the
              *                   type constructor.
              *  @return Variant representing the newly created type instance.
              */
@@ -49,7 +49,7 @@ namespace ursine
 
             /** @brief Same as Create( ), except it uses the dynamic
               *         constructor and returns the class pointer type.
-              * @param arguments List of arguments to forward to the
+              * @param args List of arguments to forward to the
               *                   type constructor.
               * @return Variant representing a pointer to the newly
               *          created type instance. NOTE: client is responsible for

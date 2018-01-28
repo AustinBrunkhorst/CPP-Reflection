@@ -21,7 +21,7 @@ namespace ursine
 
             auto &constructor = type.GetConstructor( signature );
 
-            return constructor.Invoke( arguments );
+            return constructor.InvokeVariadic( arguments );
         }
 
         Variant TypeCreator::CreateDynamicVariadic(const Type &type, const ArgumentList &arguments)
@@ -33,7 +33,7 @@ namespace ursine
 
             auto &constructor = type.GetDynamicConstructor( signature );
 
-            return constructor.Invoke( arguments );
+            return constructor.InvokeVariadic( arguments );
         }
     }
 }

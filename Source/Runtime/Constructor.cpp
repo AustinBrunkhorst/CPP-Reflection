@@ -36,8 +36,8 @@ namespace ursine
             m_signature = rhs.m_signature;
         }
 
-        Constructor::Constructor(const Constructor &&rhs)
-            : Invokable( kConstructorName )
+        Constructor::Constructor(const Constructor &&rhs) noexcept
+	        : Invokable( kConstructorName )
             , m_isDynamic( rhs.m_isDynamic )
             , m_classType( rhs.m_classType )
             , m_invoker( std::move( rhs.m_invoker ) )
@@ -92,7 +92,7 @@ namespace ursine
             return m_isDynamic;
         }
 
-        Variant Constructor::InvokeVariadic(ArgumentList &arguments) const
+        Variant Constructor::InvokeVariadic(const ArgumentList &arguments) const
         {
             UAssert( IsValid( ), "Invalid constructor invoked." );
 

@@ -29,7 +29,7 @@ namespace ursine
         public:
             Constructor(void);
             Constructor(const Constructor &rhs);
-            Constructor(const Constructor &&rhs);
+            Constructor(const Constructor &&rhs) noexcept;
             
             Constructor(
                 Type classType, 
@@ -47,7 +47,7 @@ namespace ursine
             bool IsValid(void) const;
             bool IsDynamic(void) const;
 
-            Variant InvokeVariadic(ArgumentList &arguments) const;
+            Variant InvokeVariadic(const ArgumentList &arguments) const;
 
             template<typename ...Args>
             Variant Invoke(Args &&...args) const;
