@@ -4,7 +4,7 @@
 
 **Update - November 2017**
 
-I am in the process of refactoring this codebase to be more of a professional solution to C++ reflection, with an emphasis on "bring your own pipeline". My original blog post is down for the time being due to a migration of web hosting. Expect it to be back up shortly.
+I am in the process of refactoring this codebase to be more of a professional solution to C++ reflection, with an emphasis on "bring your own pipeline".
 
 I am excited to start working with the community, so please don't hesitate to contribute to this project if it's something you're interested in.
 
@@ -13,7 +13,7 @@ I worked on a complete reflection pipeline starting in the summer of 2015 for a 
 
 I created a blog where I talk more in detail about the process and try to share my experiences as best as possible. You can find the blog here -
 
-http://blog.austinbrunkhorst.com/cpp-reflection-part-1/
+https://blog.austinbrunkhorst.com/cpp-reflection-part-1/
 
 ## Building
 There are three buildable sections in this repository - [Runtime](https://github.com/AustinBrunkhorst/CPP-Reflection/tree/master/Source/Runtime), [Parser](https://github.com/AustinBrunkhorst/CPP-Reflection/tree/master/Source/Parser) and [Examples](https://github.com/AustinBrunkhorst/CPP-Reflection/tree/master/Examples). I setup an environment for building using CMake - yes it's insane but it's also awesome so let's just go with it. All examples are assuming you're working from the root of this repository.
