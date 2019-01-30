@@ -27,10 +27,11 @@ namespace ursine
         bool TypeInfo<T>::Defined = false;
 
         template<typename T>
-        void TypeInfo<T>::Register(
-            TypeID id, 
-            TypeData &data, 
-            bool beingDefined
+		void TypeInfo<T>::Register(
+			TypeID id,
+			TypeData &data,
+			bool beingDefined,
+			TypeID DecayedTypeID
         )
         {
             // already defined
@@ -54,6 +55,9 @@ namespace ursine
 
                 applyTrivialAttributes( data );
             }
+			//For non pointer type id is passed to DecayedTypeID
+			data.DecayedTypeID = DecayedTypeID;
+
         }
 
         template<typename T>

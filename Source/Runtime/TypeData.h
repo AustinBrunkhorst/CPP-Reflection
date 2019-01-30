@@ -42,7 +42,9 @@ namespace ursine
             // enum type
 
             Enum enumeration;
-
+			
+			//DecayedTypeID
+			TypeID DecayedTypeID;
             // class type
 
             Type::Set baseClasses;

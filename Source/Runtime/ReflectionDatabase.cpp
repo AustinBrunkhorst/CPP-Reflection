@@ -10,18 +10,18 @@
 
 #include "Type.h"
 
-#define REGISTER_NATIVE_TYPE(type)                    \
+#define REGISTER_NATIVE_TYPE(type, decayed_type)      \
     {                                                 \
         auto id = AllocateType( #type );              \
         auto &handle = types[ id ];                   \
-                                                      \
-        TypeInfo<type>::Register( id, handle, true ); \
+        auto &decayed_handle = typeidof(decayed_type);         \
+        TypeInfo<type>::Register( id, handle, true, decayed_handle ); \
     }                                                 \
 
 #define REGISTER_NATIVE_TYPE_VARIANTS(type) \
-    REGISTER_NATIVE_TYPE( type )            \
-    REGISTER_NATIVE_TYPE( type* )           \
-    REGISTER_NATIVE_TYPE( const type* )     \
+    REGISTER_NATIVE_TYPE( type, type )            \
+    REGISTER_NATIVE_TYPE( type*, type )           \
+    REGISTER_NATIVE_TYPE( const type*, type )     \
 
 #define REGISTER_NATIVE_TYPE_VARIANTS_W_ARRAY(type)         \
     REGISTER_NATIVE_TYPE_VARIANTS( type )                   \

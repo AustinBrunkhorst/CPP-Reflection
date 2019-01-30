@@ -33,7 +33,7 @@ namespace ursine
         {
             static bool Defined;
 
-            static void Register(TypeID id, TypeData &data, bool beingDefined);
+            static void Register(TypeID id, TypeData &data, bool beingDefined, TypeID DecayedTypeID);
 
         private:
             template<typename U = T>
