@@ -21,18 +21,19 @@ void meta_generated::AllocateModuleFile{{targetName}}{{moduleFileName}}(m::Refle
     ///////////////////////////////////////////////////////////////////////////
     {{#class}}
     {
+		//ID of decayed type
+        auto decayed_id = db.AllocateType( "{{& displayName}}" );
         { // Base Type
-            auto id = db.AllocateType( "{{& displayName}}" );
-            auto &type = db.types[ id ];
+            auto &type = db.types[ decayed_id ];
 
-            m::TypeInfo<{{& qualifiedName}}>::Register( id, type, true );
+            m::TypeInfo<{{& qualifiedName}}>::Register( decayed_id, type, true, decayed_id );
         }
         {{#ptrTypeEnabled}}
         { // Pointer Type
             auto id = db.AllocateType( "{{& displayName}}*" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false );
+            m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false, decayed_id );
         }
         {{/ptrTypeEnabled}}
         {{#constPtrTypeEnabled}}
@@ -40,7 +41,7 @@ void meta_generated::AllocateModuleFile{{targetName}}{{moduleFileName}}(m::Refle
             auto id = db.AllocateType( "const {{& displayName}}*" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<const {{& qualifiedName}}*>::Register( id, type, false );
+            m::TypeInfo<const {{& qualifiedName}}*>::Register( id, type, false, decayed_id );
         }
         {{/constPtrTypeEnabled}}
     }
@@ -61,7 +62,7 @@ void meta_generated::AllocateModuleFile{{targetName}}{{moduleFileName}}(m::Refle
             auto id = db.AllocateType( "{{& displayName}}*" );
             auto &type = db.types[ id ];
 
-            m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, false );
+            m::TypeInfo<{{& qualifiedName}}*>::Register( id, type, true );
         }
         {{/ptrTypeEnabled}}
         {{#constPtrTypeEnabled}}
